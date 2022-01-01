@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.79967b96.css",
-    "main.js": "/static/js/main.fcea44f0.js",
-    "static/js/787.6fa1c259.chunk.js": "/static/js/787.6fa1c259.chunk.js",
-    "index.html": "/index.html",
-    "main.79967b96.css.map": "/static/css/main.79967b96.css.map",
-    "main.fcea44f0.js.map": "/static/js/main.fcea44f0.js.map",
-    "787.6fa1c259.chunk.js.map": "/static/js/787.6fa1c259.chunk.js.map"
+    "main.css": "/hello-wordl/static/css/main.79967b96.css",
+    "main.js": "/hello-wordl/static/js/main.8482d56e.js",
+    "static/js/787.6fa1c259.chunk.js": "/hello-wordl/static/js/787.6fa1c259.chunk.js",
+    "index.html": "/hello-wordl/index.html",
+    "main.79967b96.css.map": "/hello-wordl/static/css/main.79967b96.css.map",
+    "main.8482d56e.js.map": "/hello-wordl/static/js/main.8482d56e.js.map",
+    "787.6fa1c259.chunk.js.map": "/hello-wordl/static/js/787.6fa1c259.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.79967b96.css",
-    "static/js/main.fcea44f0.js"
+    "static/js/main.8482d56e.js"
   ]
 }
