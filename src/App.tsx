@@ -26,20 +26,24 @@ function App() {
       <h1>hello wordl</h1>
       <input
         type="range"
-        min="3"
-        max="15"
+        min="4"
+        max="11"
         value={wordLength}
         onChange={(e) => {
-          setTarget(randomTarget(Number(e.target.value)));
-          setWordLength(Number(e.target.value));
+          const length = Number(e.target.value);
+          setTarget(randomTarget(length));
+          setWordLength(length);
         }}
       ></input>
       <div className="App">
         <Game
-          key={wordLength}
+          key={target}
           wordLength={wordLength}
           target={target}
           maxGuesses={6}
+          restart={() => {
+            setTarget(randomTarget(wordLength));
+          }}
         />
       </div>
     </>

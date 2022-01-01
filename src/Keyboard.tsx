@@ -22,6 +22,9 @@ export function Keyboard(props: KeyboardProps) {
             if (clue !== undefined) {
               className += " " + clueClass(clue);
             }
+            if (label.length > 1) {
+              className += " Game-keyboard-button-wide";
+            }
             return (
               <div
                 tabIndex={-1}
@@ -31,7 +34,7 @@ export function Keyboard(props: KeyboardProps) {
                   props.onKey(label);
                 }}
               >
-                {label}
+                {label.replace("Backspace", "⌫")}
               </div>
             );
           })}

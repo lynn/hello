@@ -6,23 +6,31 @@ import { Keyboard } from "./Keyboard";
 
 enum GameState {
   Playing,
-  Over,
+  Won,
+  Lost,
 }
 
 interface GameProps {
   target: string;
   wordLength: number;
   maxGuesses: number;
+  restart: () => void;
 }
 
 function Game(props: GameProps) {
   const [gameState, setGameState] = useState(GameState.Playing);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
+  const [hint, setHint] = useState<string>(`${props.wordLength} letters`);
 
   const onKey = (key: string) => {
     console.log(key);
-    if (gameState !== GameState.Playing) return;
+    if (gameState !== GameState.Playing) {
+      if (key === "Enter") {
+        props.restart();
+      }
+      return;
+    }
     if (guesses.length === props.maxGuesses) return;
     if (/^[a-z]$/.test(key)) {
       setCurrentGuess((guess) => (guess + key).slice(0, props.wordLength));
@@ -30,15 +38,26 @@ function Game(props: GameProps) {
       setCurrentGuess((guess) => guess.slice(0, -1));
     } else if (key === "Enter") {
       if (currentGuess.length !== props.wordLength) {
-        // TODO show a helpful message
+        setHint("Too short");
         return;
       }
       if (!dictionary.includes(currentGuess)) {
-        // TODO show a helpful message
+        setHint("Not a valid word");
         return;
       }
       setGuesses((guesses) => guesses.concat([currentGuess]));
       setCurrentGuess((guess) => "");
+      if (currentGuess === props.target) {
+        setHint("You won! (Enter to play again)");
+        setGameState(GameState.Won);
+      } else if (guesses.length + 1 === props.maxGuesses) {
+        setHint(
+          `You lost! The answer was ${props.target.toUpperCase()}. (Enter to play again)`
+        );
+        setGameState(GameState.Lost);
+      } else {
+        setHint("");
+      }
     }
   };
 
@@ -46,14 +65,11 @@ function Game(props: GameProps) {
     const onKeyDown = (e: KeyboardEvent) => {
       onKey(e.key);
     };
-
     document.addEventListener("keydown", onKeyDown);
-
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentGuess]);
+  }, [currentGuess, gameState]);
 
   let letterInfo = new Map<string, Clue>();
   const rowDivs = Array(props.maxGuesses)
@@ -61,7 +77,8 @@ function Game(props: GameProps) {
     .map((_, i) => {
       const guess = [...guesses, currentGuess][i] ?? "";
       const cluedLetters = clue(guess, props.target);
-      if (i < guesses.length) {
+      const lockedIn = i < guesses.length;
+      if (lockedIn) {
         for (const { clue, letter } of cluedLetters) {
           if (clue === undefined) break;
           const old = letterInfo.get(letter);
@@ -74,7 +91,7 @@ function Game(props: GameProps) {
         <Row
           key={i}
           wordLength={props.wordLength}
-          rowState={i < guesses.length ? RowState.LockedIn : RowState.Pending}
+          rowState={lockedIn ? RowState.LockedIn : RowState.Pending}
           cluedLetters={cluedLetters}
         />
       );
@@ -83,6 +100,7 @@ function Game(props: GameProps) {
   return (
     <div className="Game">
       {rowDivs}
+      <p>{hint || `\u00a0`}</p>
       <Keyboard letterInfo={letterInfo} onKey={onKey} />
     </div>
   );
