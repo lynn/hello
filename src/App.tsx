@@ -11,7 +11,6 @@ const targets = common
 
 function randomTarget(wordLength: number) {
   const eligible = targets.filter((word) => word.length === wordLength);
-  console.log(eligible);
   return pick(eligible);
 }
 

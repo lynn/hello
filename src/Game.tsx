@@ -24,7 +24,6 @@ function Game(props: GameProps) {
   const [hint, setHint] = useState<string>(`${props.wordLength} letters`);
 
   const onKey = (key: string) => {
-    console.log(key);
     if (gameState !== GameState.Playing) {
       if (key === "Enter") {
         props.restart();
