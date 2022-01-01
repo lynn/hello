@@ -14,4 +14,5 @@ export const names: Set<string> = new Set([
   "roger",
   "sally",
   "texas",
+  "willy",
 ]);

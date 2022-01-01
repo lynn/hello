@@ -41,6 +41,7 @@ body {
 .Game-keyboard {
   display: flex;
   flex-direction: column;
+  user-select: none;
 }
 
 .Game-keyboard-row {
