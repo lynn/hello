@@ -1,4 +1,4 @@
-import { wordLength } from "./util";
+import { Clue, clueClass, CluedLetter } from "./clue";
 
 export enum RowState {
   LockedIn,
@@ -7,26 +7,19 @@ export enum RowState {
 
 interface RowProps {
   rowState: RowState;
-  letters: string;
-  target: string;
+  wordLength: number;
+  cluedLetters: CluedLetter[];
 }
 
 export function Row(props: RowProps) {
   const isLockedIn = props.rowState === RowState.LockedIn;
-  const letterDivs = props.letters
-    .padEnd(wordLength)
-    .split("")
-    .map((letter, i) => {
+  const letterDivs = props.cluedLetters
+    .concat(Array(props.wordLength).fill({ clue: Clue.Absent, letter: "" }))
+    .slice(0, props.wordLength)
+    .map(({ clue, letter }, i) => {
       let letterClass = "Row-letter";
-      if (isLockedIn) {
-        if (props.target[i] === letter) {
-          letterClass += " Row-letter-green";
-        } else if (props.target.includes(letter)) {
-          // TODO don't color letters accounted for by a green clue
-          letterClass += " Row-letter-yellow";
-        } else {
-          letterClass += " Row-letter-gray";
-        }
+      if (isLockedIn && clue !== undefined) {
+        letterClass += " " + clueClass(clue);
       }
       return (
         <div key={i} className={letterClass}>

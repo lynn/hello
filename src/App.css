@@ -7,14 +7,14 @@ body {
   background-color: #eeeeee;
 }
 
-div.Row {
+.Row {
   display: flex;
   justify-content: center;
 }
 
-div.Row-letter {
+.Row-letter {
   margin: 2px;
-  border: 2px solid rgba(0,0,0,0.4);
+  border: 2px solid rgba(0, 0, 0, 0.4);
   width: 40px;
   height: 40px;
   font-size: 28px;
@@ -25,19 +25,47 @@ div.Row-letter {
   font-weight: bold;
 }
 
-div.Row-letter-green {
+.Game-keyboard {
+  display: flex;
+  flex-direction: column;
+}
+
+.Game-keyboard-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.Game-keyboard-button {
+  margin: 2px;
+  background-color: #cdcdcd;
+  padding: 4px;
+  text-transform: capitalize;
+  border-radius: 4px;
+  min-width: 25px;
+  color: inherit;
+  text-decoration: inherit;
+  border: inherit;
+  cursor: pointer;
+}
+
+.Game-keyboard-button:focus {
+  outline: none;
+}
+
+.letter-correct {
   border: none;
   background-color: rgb(87, 172, 87);
   color: white;
 }
 
-div.Row-letter-yellow {
+.letter-elsewhere {
   border: none;
   background-color: #e9c601;
   color: white;
 }
 
-div.Row-letter-gray {
+.letter-absent {
   border: none;
   background-color: rgb(162, 162, 162);
   color: white;
