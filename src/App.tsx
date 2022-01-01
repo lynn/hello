@@ -3,7 +3,7 @@ import common from "./common.json";
 import { dictionarySet, pick } from "./util";
 import Game from "./Game";
 import { names } from "./names";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const targets = common
   .slice(0, 20000) // adjust for max target freakiness

@@ -63,7 +63,7 @@ body {
   font-size: 20px;
   color: inherit;
   text-decoration: inherit;
-  border: inherit;
+  border: 2px solid transparent;
   cursor: pointer;
 }
 
@@ -76,19 +76,19 @@ body {
 }
 
 .letter-correct {
-  border: none;
+  border: 2px solid rgba(0, 0, 0, 0.3);
   background-color: rgb(87, 172, 87);
   color: white;
 }
 
 .letter-elsewhere {
-  border: none;
+  border: 2px dotted rgba(0, 0, 0, 0.3);
   background-color: #e9c601;
   color: white;
 }
 
 .letter-absent {
-  border: none;
+  border: 2px solid transparent;
   background-color: rgb(162, 162, 162);
   color: white;
 }

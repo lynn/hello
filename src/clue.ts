@@ -9,28 +9,20 @@ export interface CluedLetter {
   letter: string;
 }
 
-// clue("perks", "rebus")
-// [
-//   { letter: "p", clue: Absent },
-//   { letter: "e", clue: Correct },
-//   { letter: "r", clue: Elsewhere },
-//   { letter: "k", clue: Absent },
-//   { letter: "s", clue: Correct },
-// ]
-
 export function clue(word: string, target: string): CluedLetter[] {
-  let notFound: string[] = [];
-  target.split("").map((letter, i) => {
+  let elusive: string[] = [];
+  target.split("").forEach((letter, i) => {
     if (word[i] !== letter) {
-      notFound.push(letter);
+      elusive.push(letter);
     }
   });
   return word.split("").map((letter, i) => {
     let j: number;
     if (target[i] === letter) {
       return { clue: Clue.Correct, letter };
-    } else if ((j = notFound.indexOf(letter)) > -1) {
-      notFound[j] = "";
+    } else if ((j = elusive.indexOf(letter)) > -1) {
+      // "use it up" so we don't clue at it twice
+      elusive[j] = "";
       return { clue: Clue.Elsewhere, letter };
     } else {
       return { clue: Clue.Absent, letter };
