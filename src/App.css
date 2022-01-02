@@ -94,7 +94,7 @@ body {
   color: white;
 }
 
-@media(prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
   body {
     background-color: #404040;
     color: #e0e0e0;
@@ -112,20 +112,21 @@ body {
     border: 2px solid rgba(0, 0, 0, 0.3);
     color: white;
   }
-  
+
   .letter-elsewhere {
     border: 2px dotted rgba(0, 0, 0, 0.3);
     color: white;
   }
-  
+
   .letter-absent {
     border: 2px solid transparent;
     background-color: rgb(142, 142, 142);
     color: white;
-  }  
+  }
 }
 
-a, a:visited {
+a,
+a:visited {
   color: #8080ff;
 }
 
@@ -133,7 +134,18 @@ a:active {
   color: #cc77ff;
 }
 
+.App-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.App-option input {
+  margin-left: 0.5rem;
+}
+
 .App-footer {
-  margin-top: 1rem;
+  margin: -1rem 0 2rem 0;
   font-size: 80%;
 }

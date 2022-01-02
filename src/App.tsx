@@ -23,17 +23,26 @@ function App() {
   return (
     <>
       <h1>hello wordl</h1>
-      <input
-        type="range"
-        min="4"
-        max="11"
-        value={wordLength}
-        onChange={(e) => {
-          const length = Number(e.target.value);
-          setTarget(randomTarget(length));
-          setWordLength(length);
-        }}
-      ></input>
+      <footer className="App-footer">
+        by <a href="https://twitter.com/chordbug">@chordbug</a>, inspired by{" "}
+        <a href="https://www.powerlanguage.co.uk/wordle/">wordle</a>. report
+        issues <a href="https://github.com/lynn/hello-wordl">here</a>
+      </footer>
+      <div className="App-option">
+        <label htmlFor="wordLength">Letters:</label>
+        <input
+          type="range"
+          min="4"
+          max="11"
+          id="wordLength"
+          value={wordLength}
+          onChange={(e) => {
+            const length = Number(e.target.value);
+            setTarget(randomTarget(length));
+            setWordLength(length);
+          }}
+        ></input>
+      </div>
       <div className="App">
         <Game
           key={target}
@@ -45,11 +54,6 @@ function App() {
           }}
         />
       </div>
-      <footer className="App-footer">
-        By <a href="https://twitter.com/chordbug">@chordbug</a>, inspired by{" "}
-        <a href="https://www.powerlanguage.co.uk/wordle/">Wordle</a>,
-        hosted on <a href="https://github.com/lynn/hello-wordl">GitHub</a>.
-      </footer>
     </>
   );
 }
