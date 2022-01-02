@@ -45,6 +45,11 @@ function App() {
           }}
         />
       </div>
+      <footer className="App-footer">
+        By <a href="https://twitter.com/chordbug">@chordbug</a>, inspired by{" "}
+        <a href="https://www.powerlanguage.co.uk/wordle/">Wordle</a>,
+        hosted on <a href="https://github.com/lynn/hello-wordl">GitHub</a>.
+      </footer>
     </>
   );
 }

@@ -33,8 +33,10 @@ function Game(props: GameProps) {
     if (guesses.length === props.maxGuesses) return;
     if (/^[a-z]$/.test(key)) {
       setCurrentGuess((guess) => (guess + key).slice(0, props.wordLength));
+      setHint("");
     } else if (key === "Backspace") {
       setCurrentGuess((guess) => guess.slice(0, -1));
+      setHint("");
     } else if (key === "Enter") {
       if (currentGuess.length !== props.wordLength) {
         setHint("Too short");
@@ -62,7 +64,9 @@ function Game(props: GameProps) {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      onKey(e.key);
+      if (!e.ctrlKey && !e.metaKey) {
+        onKey(e.key);
+      }
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {

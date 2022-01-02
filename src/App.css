@@ -36,12 +36,12 @@ body {
 .Game {
   display: flex;
   flex-direction: column;
+  user-select: none;
 }
 
 .Game-keyboard {
   display: flex;
   flex-direction: column;
-  user-select: none;
 }
 
 .Game-keyboard-row {
@@ -92,4 +92,48 @@ body {
   border: 2px solid transparent;
   background-color: rgb(162, 162, 162);
   color: white;
+}
+
+@media(prefers-color-scheme: dark) {
+  body {
+    background-color: #404040;
+    color: #e0e0e0;
+  }
+
+  .Game-keyboard-button {
+    color: #404040;
+  }
+
+  .Row-letter {
+    border: 2px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .letter-correct {
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    color: white;
+  }
+  
+  .letter-elsewhere {
+    border: 2px dotted rgba(0, 0, 0, 0.3);
+    color: white;
+  }
+  
+  .letter-absent {
+    border: 2px solid transparent;
+    background-color: rgb(142, 142, 142);
+    color: white;
+  }  
+}
+
+a, a:visited {
+  color: #8080ff;
+}
+
+a:active {
+  color: #cc77ff;
+}
+
+.App-footer {
+  margin-top: 1rem;
+  font-size: 80%;
 }
