@@ -134,15 +134,19 @@ a:active {
   color: #cc77ff;
 }
 
-.App-option {
+.Game-options {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
 }
 
-.App-option input {
-  margin-left: 0.5rem;
+.Game-options > * + * {
+  margin-inline-start: 0.5rem;
+}
+
+.Game-options button {
+  min-width: 4rem;
 }
 
 .App-footer {
