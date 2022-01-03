@@ -1,9 +1,5 @@
 import "./App.css";
-import common from "./common.json";
-import { dictionarySet, pick } from "./util";
 import Game from "./Game";
-import { names } from "./names";
-import { useState } from "react";
 
 function App() {
   return (

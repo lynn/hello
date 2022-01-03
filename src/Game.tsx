@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Row, RowState } from "./Row";
-import dictionary from "./dictionary.json";
+import dictionary from "./lists/en/dictionary.json";
 import { Clue, clue } from "./clue";
 import { Keyboard } from "./Keyboard";
-import common from "./common.json";
+import common from "./lists/en/common.json";
 import { dictionarySet, pick } from "./util";
 import { names } from "./names";
 

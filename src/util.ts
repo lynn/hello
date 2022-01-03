@@ -1,4 +1,4 @@
-import dictionary from "./dictionary.json";
+import dictionary from "./lists/en/dictionary.json";
 
 export const dictionarySet: Set<string> = new Set(dictionary);
 
