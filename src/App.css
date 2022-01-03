@@ -25,12 +25,17 @@ body {
   font-weight: bold;
 }
 
-.App {
+.App-container {
+  position: relative;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
-  max-width: 500px;
   margin: 0 auto;
   justify-content: center;
+}
+
+.App-container h1 {
+  margin-top: 0;
 }
 
 .Game {
@@ -152,4 +157,10 @@ a:active {
 .App-footer {
   margin: -1rem 0 2rem 0;
   font-size: 80%;
+  line-height: 1.5;
+}
+
+.App-about {
+  margin-top: -1rem;
+  line-height: 1.4;
 }

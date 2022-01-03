@@ -4,6 +4,7 @@ export const names: Set<string> = new Set([
   "carol",
   "costa",
   "dutch",
+  "fossa", // just too hard
   "harry",
   "jimmy",
   "jones",
@@ -13,6 +14,7 @@ export const names: Set<string> = new Set([
   "pedro",
   "roger",
   "sally",
+  "savoy",
   "texas",
   "willy",
 ]);

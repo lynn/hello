@@ -15,6 +15,7 @@ enum GameState {
 
 interface GameProps {
   maxGuesses: number;
+  hidden: boolean;
 }
 
 const targets = common
@@ -120,7 +121,7 @@ function Game(props: GameProps) {
     });
 
   return (
-    <div className="Game">
+    <div className="Game" style={{ display: props.hidden ? "none" : "block" }}>
       <div className="Game-options">
         <label htmlFor="wordLength">Letters:</label>
         <input
