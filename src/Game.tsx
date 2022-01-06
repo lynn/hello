@@ -51,8 +51,8 @@ function Game(props: GameProps) {
       return;
     }
     if (guesses.length === props.maxGuesses) return;
-    if (/^[a-z]$/.test(key)) {
-      setCurrentGuess((guess) => (guess + key).slice(0, wordLength));
+    if (/^[a-zA-Z]$/.test(key)) {
+      setCurrentGuess((guess) => (guess + key.toLowerCase()).slice(0, wordLength));
       setHint("");
     } else if (key === "Backspace") {
       setCurrentGuess((guess) => guess.slice(0, -1));
