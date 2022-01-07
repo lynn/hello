@@ -4,7 +4,7 @@ import dictionary from "./dictionary.json";
 import { Clue, clue } from "./clue";
 import { Keyboard } from "./Keyboard";
 import common from "./common.json";
-import { dictionarySet, pick, resetRng } from "./util";
+import { dictionarySet, pick, resetRng, seed } from "./util";
 import { names } from "./names";
 
 enum GameState {
@@ -33,20 +33,25 @@ function Game(props: GameProps) {
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [wordLength, setWordLength] = useState(5);
   const [hint, setHint] = useState<string>(`Make your first guess!`);
-  const [target, setTarget] = useState(() => randomTarget(wordLength));
+  const [target, setTarget] = useState(() => {
+    resetRng();
+    return randomTarget(wordLength);
+  });
+  const [gameNumber, setGameNumber] = useState(1);
 
-  const reset = () => {
+  const startNextGame = () => {
     setTarget(randomTarget(wordLength));
     setGuesses([]);
     setCurrentGuess("");
     setHint("");
     setGameState(GameState.Playing);
+    setGameNumber((x) => x + 1);
   };
 
   const onKey = (key: string) => {
     if (gameState !== GameState.Playing) {
       if (key === "Enter") {
-        reset();
+        startNextGame();
       }
       return;
     }
@@ -137,6 +142,8 @@ function Game(props: GameProps) {
           onChange={(e) => {
             const length = Number(e.target.value);
             resetRng();
+            setGameNumber(1);
+            setGameState(GameState.Playing);
             setGuesses([]);
             setTarget(randomTarget(length));
             setWordLength(length);
@@ -161,6 +168,11 @@ function Game(props: GameProps) {
       {rowDivs}
       <p>{hint || `\u00a0`}</p>
       <Keyboard letterInfo={letterInfo} onKey={onKey} />
+      {seed ? (
+        <div className="Game-seed-info">
+          seed {seed}, length {wordLength}, game {gameNumber}
+        </div>
+      ) : undefined}
     </div>
   );
 }

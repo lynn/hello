@@ -164,3 +164,9 @@ a:active {
   margin-top: -1rem;
   line-height: 1.4;
 }
+
+.Game-seed-info {
+  opacity: 0.5;
+  margin-top: 1em;
+  font-variant-numeric: tabular-nums;
+}

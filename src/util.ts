@@ -11,7 +11,9 @@ function mulberry32(a: number) {
   };
 }
 
-const seed = Number(new URLSearchParams(window.location.search).get("seed"));
+export const seed = Number(
+  new URLSearchParams(window.location.search).get("seed")
+);
 const makeRandom = () => (seed ? mulberry32(seed) : () => Math.random());
 let random = makeRandom();
 
