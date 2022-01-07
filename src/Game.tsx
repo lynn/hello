@@ -4,7 +4,7 @@ import dictionary from "./dictionary.json";
 import { Clue, clue } from "./clue";
 import { Keyboard } from "./Keyboard";
 import common from "./common.json";
-import { dictionarySet, pick } from "./util";
+import { dictionarySet, pick, resetRng } from "./util";
 import { names } from "./names";
 
 enum GameState {
@@ -33,7 +33,7 @@ function Game(props: GameProps) {
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [wordLength, setWordLength] = useState(5);
   const [hint, setHint] = useState<string>(`Make your first guess!`);
-  const [target, setTarget] = useState(randomTarget(wordLength));
+  const [target, setTarget] = useState(() => randomTarget(wordLength));
 
   const reset = () => {
     setTarget(randomTarget(wordLength));
@@ -129,13 +129,19 @@ function Game(props: GameProps) {
           min="4"
           max="11"
           id="wordLength"
-          disabled={guesses.length > 0 || currentGuess !== ""}
+          disabled={
+            gameState === GameState.Playing &&
+            (guesses.length > 0 || currentGuess !== "")
+          }
           value={wordLength}
           onChange={(e) => {
             const length = Number(e.target.value);
+            resetRng();
+            setGuesses([]);
             setTarget(randomTarget(length));
             setWordLength(length);
             setHint(`${length} letters`);
+            (document.activeElement as HTMLElement)?.blur();
           }}
         ></input>
         <button
