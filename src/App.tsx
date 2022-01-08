@@ -23,7 +23,7 @@ function App() {
           href="#"
           onClick={() =>
             (document.location = seed
-              ? "/"
+              ? "?"
               : "?seed=" +
                 new Date().toISOString().replace(/-/g, "").slice(0, 8))
           }
