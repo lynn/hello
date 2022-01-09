@@ -3,9 +3,8 @@ import { Row, RowState } from "./Row";
 import dictionary from "./dictionary.json";
 import { Clue, clue } from "./clue";
 import { Keyboard } from "./Keyboard";
-import common from "./common.json";
+import targetList from "./targets.json";
 import { dictionarySet, pick, resetRng, seed } from "./util";
-import { names } from "./names";
 
 enum GameState {
   Playing,
@@ -18,9 +17,8 @@ interface GameProps {
   hidden: boolean;
 }
 
-const targets = common
-  .slice(0, 20000) // adjust for max target freakiness
-  .filter((word) => dictionarySet.has(word) && !names.has(word));
+const targets = targetList
+  .slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
 
 function randomTarget(wordLength: number) {
   const eligible = targets.filter((word) => word.length === wordLength);

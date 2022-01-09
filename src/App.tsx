@@ -1,8 +1,6 @@
 import "./App.css";
-import common from "./common.json";
-import { dictionarySet, pick, seed } from "./util";
+import { seed } from "./util";
 import Game from "./Game";
-import { names } from "./names";
 import { useState } from "react";
 import { Row, RowState } from "./Row";
 import { Clue } from "./clue";
