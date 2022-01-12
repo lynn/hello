@@ -170,3 +170,12 @@ a:active {
   margin-top: 1em;
   font-variant-numeric: tabular-nums;
 }
+
+.Game-sr-feedback {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

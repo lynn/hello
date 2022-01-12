@@ -17,8 +17,7 @@ interface GameProps {
   hidden: boolean;
 }
 
-const targets = targetList
-  .slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
+const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
 
 function randomTarget(wordLength: number) {
   const eligible = targets.filter((word) => word.length === wordLength);
@@ -31,6 +30,7 @@ function Game(props: GameProps) {
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [wordLength, setWordLength] = useState(5);
   const [hint, setHint] = useState<string>(`Make your first guess!`);
+  const [srStatus, setSrStatus] = useState<string>(``);
   const [target, setTarget] = useState(() => {
     resetRng();
     return randomTarget(wordLength);
@@ -81,6 +81,7 @@ function Game(props: GameProps) {
         setGameState(GameState.Lost);
       } else {
         setHint("");
+        setSrStatus("Feedback goes here");
       }
     }
   };
@@ -117,7 +118,13 @@ function Game(props: GameProps) {
         <Row
           key={i}
           wordLength={wordLength}
-          rowState={lockedIn ? RowState.LockedIn : RowState.Pending}
+          rowState={
+            lockedIn
+              ? RowState.LockedIn
+              : i === guesses.length
+              ? RowState.Editing
+              : RowState.Pending
+          }
           cluedLetters={cluedLetters}
         />
       );
@@ -146,7 +153,6 @@ function Game(props: GameProps) {
             setTarget(randomTarget(length));
             setWordLength(length);
             setHint(`${length} letters`);
-            (document.activeElement as HTMLElement)?.blur();
           }}
         ></input>
         <button
@@ -163,8 +169,11 @@ function Game(props: GameProps) {
           Give up
         </button>
       </div>
-      {rowDivs}
-      <p>{hint || `\u00a0`}</p>
+      <div className="Game-rows">{rowDivs}</div>
+      <p role="status">{hint || `\u00a0`}</p>
+      <p role="status" className="Game-sr-feedback">
+        {srStatus}
+      </p>
       <Keyboard letterInfo={letterInfo} onKey={onKey} />
       {seed ? (
         <div className="Game-seed-info">
