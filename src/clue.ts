@@ -39,3 +39,19 @@ export function clueClass(clue: Clue): string {
     return "letter-correct";
   }
 }
+
+export function clueWord(clue: Clue): string {
+  if (clue === Clue.Absent) {
+    return "no";
+  } else if (clue === Clue.Elsewhere) {
+    return "yellow";
+  } else {
+    return "correct";
+  }
+}
+
+export function describeClue(clue: CluedLetter[]): string {
+  return clue
+    .map(({ letter, clue }) => letter.toUpperCase() + " " + clueWord(clue!))
+    .join(", ");
+}

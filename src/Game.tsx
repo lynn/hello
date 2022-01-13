@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Row, RowState } from "./Row";
 import dictionary from "./dictionary.json";
-import { Clue, clue } from "./clue";
+import { Clue, clue, describeClue } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
-import { dictionarySet, pick, resetRng, seed } from "./util";
+import { dictionarySet, pick, resetRng, seed, speak } from "./util";
 
 enum GameState {
   Playing,
@@ -57,6 +57,7 @@ function Game(props: GameProps) {
     if (/^[a-z]$/.test(key)) {
       setCurrentGuess((guess) => (guess + key).slice(0, wordLength));
       setHint("");
+      setSrStatus("");
     } else if (key === "Backspace") {
       setCurrentGuess((guess) => guess.slice(0, -1));
       setHint("");
@@ -81,7 +82,7 @@ function Game(props: GameProps) {
         setGameState(GameState.Lost);
       } else {
         setHint("");
-        setSrStatus("Feedback goes here");
+        speak(describeClue(clue(currentGuess, target)));
       }
     }
   };
@@ -99,7 +100,7 @@ function Game(props: GameProps) {
   }, [currentGuess, gameState]);
 
   let letterInfo = new Map<string, Clue>();
-  const rowDivs = Array(props.maxGuesses)
+  const tableRows = Array(props.maxGuesses)
     .fill(undefined)
     .map((_, i) => {
       const guess = [...guesses, currentGuess][i] ?? "";
@@ -156,7 +157,7 @@ function Game(props: GameProps) {
           }}
         ></input>
         <button
-          style={{ flex: "0" }}
+          style={{ flex: "0 0 auto" }}
           disabled={gameState !== GameState.Playing || guesses.length === 0}
           onClick={() => {
             setHint(
@@ -169,11 +170,11 @@ function Game(props: GameProps) {
           Give up
         </button>
       </div>
-      <div className="Game-rows">{rowDivs}</div>
-      <p role="status">{hint || `\u00a0`}</p>
-      <p role="status" className="Game-sr-feedback">
+      <table className="Game-rows">{tableRows}</table>
+      <p role="alert">{hint || `\u00a0`}</p>
+      {/* <p role="alert" className="Game-sr-feedback">
         {srStatus}
-      </p>
+      </p> */}
       <Keyboard letterInfo={letterInfo} onKey={onKey} />
       {seed ? (
         <div className="Game-seed-info">

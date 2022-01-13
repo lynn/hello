@@ -13,7 +13,7 @@ export function Keyboard(props: KeyboardProps) {
   ];
 
   return (
-    <div className="Game-keyboard">
+    <div className="Game-keyboard" aria-hidden="true">
       {keyboard.map((row, i) => (
         <div key={i} className="Game-keyboard-row">
           {row.map((label, j) => {
@@ -29,6 +29,7 @@ export function Keyboard(props: KeyboardProps) {
               <div
                 tabIndex={-1}
                 key={j}
+                role="button"
                 className={className}
                 onClick={() => {
                   props.onKey(label);

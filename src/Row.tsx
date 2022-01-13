@@ -1,4 +1,4 @@
-import { Clue, clueClass, CluedLetter } from "./clue";
+import { Clue, clueClass, CluedLetter, clueWord } from "./clue";
 
 export enum RowState {
   LockedIn,
@@ -24,20 +24,22 @@ export function Row(props: RowProps) {
         letterClass += " " + clueClass(clue);
       }
       return (
-        <div key={i} className={letterClass}>
+        <td
+          key={i}
+          className={letterClass}
+          aria-live="polite"
+          aria-label={
+            isLockedIn
+              ? letter.toUpperCase() +
+                (clue === undefined ? "" : ": " + clueWord(clue))
+              : ""
+          }
+        >
           {letter}
-        </div>
+        </td>
       );
     });
   let rowClass = "Row";
   if (isLockedIn) rowClass += " Row-locked-in";
-  return (
-    <div
-      className={rowClass}
-      role={isEditing ? "input" : "row"}
-      tabIndex={isEditing ? 0 : undefined}
-    >
-      {letterDivs}
-    </div>
-  );
+  return <tr className={rowClass}>{letterDivs}</tr>;
 }
