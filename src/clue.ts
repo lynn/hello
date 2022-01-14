@@ -44,7 +44,7 @@ export function clueWord(clue: Clue): string {
   if (clue === Clue.Absent) {
     return "no";
   } else if (clue === Clue.Elsewhere) {
-    return "yellow";
+    return "elsewhere";
   } else {
     return "correct";
   }

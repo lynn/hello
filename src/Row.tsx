@@ -27,7 +27,7 @@ export function Row(props: RowProps) {
         <td
           key={i}
           className={letterClass}
-          aria-live="polite"
+          aria-live={isEditing ? "assertive" : "off"}
           aria-label={
             isLockedIn
               ? letter.toUpperCase() +

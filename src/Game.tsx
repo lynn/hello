@@ -73,7 +73,9 @@ function Game(props: GameProps) {
       setGuesses((guesses) => guesses.concat([currentGuess]));
       setCurrentGuess((guess) => "");
       if (currentGuess === target) {
-        setHint("You won! (Enter to play again)");
+        setHint(
+          `You won! The answer was ${target.toUpperCase()}. (Enter to play again)`
+        );
         setGameState(GameState.Won);
       } else if (guesses.length + 1 === props.maxGuesses) {
         setHint(
@@ -170,7 +172,9 @@ function Game(props: GameProps) {
           Give up
         </button>
       </div>
-      <table className="Game-rows">{tableRows}</table>
+      <table className="Game-rows" tabIndex={0}>
+        <tbody>{tableRows}</tbody>
+      </table>
       <p role="alert">{hint || `\u00a0`}</p>
       {/* <p role="alert" className="Game-sr-feedback">
         {srStatus}
