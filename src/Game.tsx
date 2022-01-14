@@ -29,13 +29,26 @@ function Game(props: GameProps) {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [wordLength, setWordLength] = useState(5);
-  const [hint, setHint] = useState<string>(`Make your first guess!`);
+  const [hint, setHint] = useState<string>(
+    `${targets.length.toLocaleString()} possibilities`
+  );
   const [srStatus, setSrStatus] = useState<string>(``);
   const [target, setTarget] = useState(() => {
     resetRng();
     return randomTarget(wordLength);
   });
   const [gameNumber, setGameNumber] = useState(1);
+  const [exclusions, setExclusions] = useState<
+    Record<string | number, string[]>
+  >({
+    found: ["", "", "", "", ""],
+    nowhere: [],
+    0: [],
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+  });
 
   const startNextGame = () => {
     setTarget(randomTarget(wordLength));
@@ -85,11 +98,88 @@ function Game(props: GameProps) {
         );
         setGameState(GameState.Lost);
       } else {
-        setHint("");
         speak(describeClue(clue(currentGuess, target)));
+        const currentClue = clue(currentGuess, target);
+        const notFound = currentClue
+          .filter(({ clue }) => clue === 0)
+          .filter(
+            ({ letter }) =>
+              !currentClue.some(
+                (otherPosition) =>
+                  otherPosition.letter === letter && otherPosition.clue
+              )
+          )
+          .map(({ letter }) => letter);
+
+        setExclusions({
+          found: currentClue.reduce((agg, cur, index) => {
+            if (cur.clue === 2) agg.splice(index, 1, cur.letter);
+            return agg;
+          }, exclusions.found),
+          nowhere: [...exclusions.nowhere, ...notFound],
+          0:
+            currentClue[0].clue === 1
+              ? [...exclusions[0], currentClue[0].letter]
+              : exclusions[0],
+          1:
+            currentClue[1].clue === 1
+              ? [...exclusions[1], currentClue[1].letter]
+              : exclusions[1],
+          2:
+            currentClue[2].clue === 1
+              ? [...exclusions[2], currentClue[2].letter]
+              : exclusions[2],
+          3:
+            currentClue[3].clue === 1
+              ? [...exclusions[3], currentClue[3].letter]
+              : exclusions[3],
+          4:
+            currentClue[4].clue === 1
+              ? [...exclusions[4], currentClue[4].letter]
+              : exclusions[4],
+        });
       }
     }
   };
+
+  useEffect(() => {
+    setTimeout(() => setHint(`Make your first guess!`), 3000);
+  }, [target]);
+
+  useEffect(() => {
+    if (exclusions.nowhere.length === 0) return;
+    const nowherePattern = new RegExp(`^[^${exclusions.nowhere.join("")}]+$`);
+    const notHerePattern = new RegExp(
+      `^${
+        exclusions.found[0] || exclusions[0].length
+          ? `[^${exclusions[0].join("")}]`
+          : "."
+      }${
+        exclusions.found[1] || exclusions[1].length
+          ? `[^${exclusions[1].join("")}]`
+          : "."
+      }${
+        exclusions.found[2] || exclusions[2].length
+          ? `[^${exclusions[2].join("")}]`
+          : "."
+      }${
+        exclusions.found[3] || exclusions[3].length
+          ? `[^${exclusions[3].join("")}]`
+          : "."
+      }${
+        exclusions.found[4] || exclusions[4].length
+          ? `[^${exclusions[4].join("")}]`
+          : "."
+      }$`
+    );
+
+    console.log(exclusions, nowherePattern, notHerePattern);
+
+    const possibilityCount = targets.filter(
+      (word) => nowherePattern.test(word) && notHerePattern.test(word)
+    ).length;
+    setHint(`${possibilityCount.toLocaleString()} possibilities`);
+  }, [exclusions]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
