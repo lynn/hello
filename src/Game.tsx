@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Row, RowState } from "./Row";
 import dictionary from "./dictionary.json";
-import { Clue, clue } from "./clue";
+import { Clue, clue, describeClue } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
-import { dictionarySet, pick, resetRng, seed } from "./util";
+import { dictionarySet, pick, resetRng, seed, speak } from "./util";
 
 enum GameState {
   Playing,
@@ -17,8 +17,7 @@ interface GameProps {
   hidden: boolean;
 }
 
-const targets = targetList
-  .slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
+const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
 
 function randomTarget(wordLength: number) {
   const eligible = targets.filter((word) => word.length === wordLength);
@@ -31,6 +30,7 @@ function Game(props: GameProps) {
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [wordLength, setWordLength] = useState(5);
   const [hint, setHint] = useState<string>(`Make your first guess!`);
+  const [srStatus, setSrStatus] = useState<string>(``);
   const [target, setTarget] = useState(() => {
     resetRng();
     return randomTarget(wordLength);
@@ -57,6 +57,7 @@ function Game(props: GameProps) {
     if (/^[a-z]$/.test(key)) {
       setCurrentGuess((guess) => (guess + key).slice(0, wordLength));
       setHint("");
+      setSrStatus("");
     } else if (key === "Backspace") {
       setCurrentGuess((guess) => guess.slice(0, -1));
       setHint("");
@@ -72,7 +73,9 @@ function Game(props: GameProps) {
       setGuesses((guesses) => guesses.concat([currentGuess]));
       setCurrentGuess((guess) => "");
       if (currentGuess === target) {
-        setHint("You won! (Enter to play again)");
+        setHint(
+          `You won! The answer was ${target.toUpperCase()}. (Enter to play again)`
+        );
         setGameState(GameState.Won);
       } else if (guesses.length + 1 === props.maxGuesses) {
         setHint(
@@ -81,6 +84,7 @@ function Game(props: GameProps) {
         setGameState(GameState.Lost);
       } else {
         setHint("");
+        speak(describeClue(clue(currentGuess, target)));
       }
     }
   };
@@ -98,7 +102,7 @@ function Game(props: GameProps) {
   }, [currentGuess, gameState]);
 
   let letterInfo = new Map<string, Clue>();
-  const rowDivs = Array(props.maxGuesses)
+  const tableRows = Array(props.maxGuesses)
     .fill(undefined)
     .map((_, i) => {
       const guess = [...guesses, currentGuess][i] ?? "";
@@ -117,7 +121,13 @@ function Game(props: GameProps) {
         <Row
           key={i}
           wordLength={wordLength}
-          rowState={lockedIn ? RowState.LockedIn : RowState.Pending}
+          rowState={
+            lockedIn
+              ? RowState.LockedIn
+              : i === guesses.length
+              ? RowState.Editing
+              : RowState.Pending
+          }
           cluedLetters={cluedLetters}
         />
       );
@@ -146,11 +156,10 @@ function Game(props: GameProps) {
             setTarget(randomTarget(length));
             setWordLength(length);
             setHint(`${length} letters`);
-            (document.activeElement as HTMLElement)?.blur();
           }}
         ></input>
         <button
-          style={{ flex: "0" }}
+          style={{ flex: "0 0 auto" }}
           disabled={gameState !== GameState.Playing || guesses.length === 0}
           onClick={() => {
             setHint(
@@ -163,8 +172,13 @@ function Game(props: GameProps) {
           Give up
         </button>
       </div>
-      {rowDivs}
-      <p>{hint || `\u00a0`}</p>
+      <table className="Game-rows" tabIndex={0}>
+        <tbody>{tableRows}</tbody>
+      </table>
+      <p role="alert">{hint || `\u00a0`}</p>
+      {/* <p role="alert" className="Game-sr-feedback">
+        {srStatus}
+      </p> */}
       <Keyboard letterInfo={letterInfo} onKey={onKey} />
       {seed ? (
         <div className="Game-seed-info">

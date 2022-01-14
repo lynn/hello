@@ -1,7 +1,8 @@
-import { Clue, clueClass, CluedLetter } from "./clue";
+import { Clue, clueClass, CluedLetter, clueWord } from "./clue";
 
 export enum RowState {
   LockedIn,
+  Editing,
   Pending,
 }
 
@@ -13,6 +14,7 @@ interface RowProps {
 
 export function Row(props: RowProps) {
   const isLockedIn = props.rowState === RowState.LockedIn;
+  const isEditing = props.rowState === RowState.Editing;
   const letterDivs = props.cluedLetters
     .concat(Array(props.wordLength).fill({ clue: Clue.Absent, letter: "" }))
     .slice(0, props.wordLength)
@@ -22,12 +24,22 @@ export function Row(props: RowProps) {
         letterClass += " " + clueClass(clue);
       }
       return (
-        <div key={i} className={letterClass}>
+        <td
+          key={i}
+          className={letterClass}
+          aria-live={isEditing ? "assertive" : "off"}
+          aria-label={
+            isLockedIn
+              ? letter.toUpperCase() +
+                (clue === undefined ? "" : ": " + clueWord(clue))
+              : ""
+          }
+        >
           {letter}
-        </div>
+        </td>
       );
     });
   let rowClass = "Row";
   if (isLockedIn) rowClass += " Row-locked-in";
-  return <div className={rowClass}>{letterDivs}</div>;
+  return <tr className={rowClass}>{letterDivs}</tr>;
 }

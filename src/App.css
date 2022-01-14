@@ -44,6 +44,10 @@ body {
   user-select: none;
 }
 
+table.Game-rows {
+  margin: auto;
+}
+
 .Game-keyboard {
   display: flex;
   flex-direction: column;
@@ -169,4 +173,14 @@ a:active {
   opacity: 0.5;
   margin-top: 1em;
   font-variant-numeric: tabular-nums;
+}
+
+.Game-sr-feedback,
+.sr-only {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
