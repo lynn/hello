@@ -153,6 +153,7 @@ function Game(props: GameProps) {
             setGameNumber(1);
             setGameState(GameState.Playing);
             setGuesses([]);
+            setCurrentGuess("");
             setTarget(randomTarget(length));
             setWordLength(length);
             setHint(`${length} letters`);
