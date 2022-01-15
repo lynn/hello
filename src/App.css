@@ -15,7 +15,9 @@ body {
 .Row-letter {
   margin: 2px;
   border: 2px solid rgba(0, 0, 0, 0.4);
-  width: 40px;
+  flex: 1;
+  overflow: overlay;
+  max-width: 40px;
   height: 40px;
   font-size: 28px;
   display: flex;
@@ -46,6 +48,17 @@ body {
 
 table.Game-rows {
   margin: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+table.Game-rows:focus {
+  outline: none;
+}
+
+table.Game-rows > tbody {
+  display: flex;
+  flex-direction: column;
 }
 
 .Game-keyboard {
