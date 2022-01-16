@@ -96,6 +96,9 @@ function Game(props: GameProps) {
       if (!e.ctrlKey && !e.metaKey) {
         onKey(e.key);
       }
+      if (e.key === "Backspace") {
+        e.preventDefault();
+      }
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
