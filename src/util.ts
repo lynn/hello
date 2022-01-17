@@ -45,3 +45,14 @@ export function speak(
     document.body.removeChild(document.getElementById(id)!);
   }, 1000);
 }
+
+export function initExclusions(
+  wordLength: number
+): Record<"found" | "nowhere" | number, string[]> {
+  return new Array(wordLength)
+    .fill([] as string[])
+    .reduce((agg, value, index) => ({ ...agg, [index]: value }), {
+      found: new Array(wordLength).fill(""),
+      nowhere: [],
+    });
+}
