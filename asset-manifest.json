@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/hello-wordl/static/css/main.1e528244.css",
-    "main.js": "/hello-wordl/static/js/main.3d82d141.js",
+    "main.js": "/hello-wordl/static/js/main.9501a77c.js",
     "index.html": "/hello-wordl/index.html",
     "main.1e528244.css.map": "/hello-wordl/static/css/main.1e528244.css.map",
-    "main.3d82d141.js.map": "/hello-wordl/static/js/main.3d82d141.js.map"
+    "main.9501a77c.js.map": "/hello-wordl/static/js/main.9501a77c.js.map"
   },
   "entrypoints": [
     "static/css/main.1e528244.css",
-    "static/js/main.3d82d141.js"
+    "static/js/main.9501a77c.js"
   ]
 }
