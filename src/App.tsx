@@ -1,10 +1,13 @@
 import "./App.css";
 import { maxGuesses, seed } from "./util";
 import Game from "./Game";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { About } from "./About";
 
-function useSetting<T>(key: string, initial: T): [T, (value: T | ((t: T) => T)) => void] {
+function useSetting<T>(
+  key: string,
+  initial: T
+): [T, (value: T | ((t: T) => T)) => void] {
   const [current, setCurrent] = useState<T>(() => {
     try {
       const item = window.localStorage.getItem(key);
@@ -26,13 +29,20 @@ function useSetting<T>(key: string, initial: T): [T, (value: T | ((t: T) => T)) 
 function App() {
   const [page, setPage] = useState<"game" | "about" | "settings">("game");
   const prefersDark =
-    window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
   const [dark, setDark] = useSetting<boolean>("dark", prefersDark);
   const [hard, setHard] = useSetting<boolean>("hard", false);
 
+  useEffect(() => {
+    document.body.className = dark ? "dark" : "";
+  }, [dark]);
+
   return (
     <div className="App-container">
-      <h1>hello wordl</h1>
+      <h1>
+        <span style={hard ? { color: "#e66" } : {}}>hell</span>o wordl
+      </h1>
       <div style={{ position: "absolute", right: 5, top: 5 }}>
         {page !== "game" ? (
           <a href="#" onClick={() => setPage("game")}>
@@ -63,7 +73,8 @@ function App() {
           onClick={() =>
             (document.location = seed
               ? "?"
-              : "?seed=" + new Date().toISOString().replace(/-/g, "").slice(0, 8))
+              : "?seed=" +
+                new Date().toISOString().replace(/-/g, "").slice(0, 8))
           }
         >
           {seed ? "Random" : "Today's"}
@@ -88,7 +99,7 @@ function App() {
               checked={hard}
               onChange={() => setHard((x: boolean) => !x)}
             />
-            <label htmlFor="hard-setting">Hard mode (must use clues)</label>
+            <label htmlFor="hard-setting">Hard mode (must use all clues)</label>
           </div>
         </div>
       )}

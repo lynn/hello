@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Row, RowState } from "./Row";
 import dictionary from "./dictionary.json";
-import { Clue, clue, describeClue } from "./clue";
+import { Clue, clue, describeClue, violation } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
 import { dictionarySet, pick, resetRng, seed, speak } from "./util";
@@ -58,6 +58,11 @@ function Game(props: GameProps) {
       setCurrentGuess((guess) =>
         (guess + key.toLowerCase()).slice(0, wordLength)
       );
+      // When typing a guess, make sure a later "Enter" press won't activate a link or button.
+      const active = document.activeElement as HTMLElement;
+      if (active && ["A", "BUTTON"].includes(active.tagName)) {
+        active.blur();
+      }
       setHint("");
     } else if (key === "Backspace") {
       setCurrentGuess((guess) => guess.slice(0, -1));
@@ -70,6 +75,15 @@ function Game(props: GameProps) {
       if (!dictionary.includes(currentGuess)) {
         setHint("Not a valid word");
         return;
+      }
+      if (props.hard) {
+        for (const g of guesses) {
+          const feedback = violation(clue(g, target), currentGuess);
+          if (feedback) {
+            setHint(feedback);
+            return;
+          }
+        }
       }
       setGuesses((guesses) => guesses.concat([currentGuess]));
       setCurrentGuess((guess) => "");

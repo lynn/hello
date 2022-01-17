@@ -1,3 +1,5 @@
+import { ordinal } from "./util";
+
 export enum Clue {
   Absent,
   Elsewhere,
@@ -54,4 +56,26 @@ export function describeClue(clue: CluedLetter[]): string {
   return clue
     .map(({ letter, clue }) => letter.toUpperCase() + " " + clueWord(clue!))
     .join(", ");
+}
+
+export function violation(
+  clues: CluedLetter[],
+  guess: string
+): string | undefined {
+  let i = 0;
+  for (const { letter, clue } of clues) {
+    if (clue === Clue.Absent) {
+      // Apparently Wordle doesn't enforce this?
+      // if (guess.includes(letter))
+      //   return "Guess can't contain " + letter.toUpperCase();
+    } else if (clue === Clue.Correct) {
+      if (guess[i] !== letter)
+        return ordinal(i + 1) + " letter must be " + letter.toUpperCase();
+    } else if (clue === Clue.Elsewhere) {
+      if (!guess.includes(letter))
+        return "Guess must contain " + letter.toUpperCase();
+    }
+    ++i;
+  }
+  return undefined;
 }

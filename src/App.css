@@ -5,6 +5,7 @@
 body {
   text-align: center;
   background-color: #eeeeee;
+  transition: 0.3s background-color ease-out;
 }
 
 .Row {
@@ -14,7 +15,7 @@ body {
 
 .Row-letter {
   margin: 2px;
-  border: 2px solid rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(128, 128, 128, 0.8);
   flex: 1;
   max-width: 40px;
   height: 40px;
@@ -39,10 +40,14 @@ body {
   margin-top: 0;
 }
 
+.Game,
+h1 {
+  user-select: none;
+}
+
 .Game {
   display: flex;
   flex-direction: column;
-  user-select: none;
 }
 
 table.Game-rows {
@@ -99,51 +104,29 @@ table.Game-rows > tbody {
 
 .letter-correct {
   border: 2px solid rgba(0, 0, 0, 0.3);
-  background-color: rgb(87, 172, 87);
-  color: white;
+  background-color: rgb(87, 172, 120);
+  color: white !important;
 }
 
 .letter-elsewhere {
   border: 2px dotted rgba(0, 0, 0, 0.3);
   background-color: #e9c601;
-  color: white;
+  color: white !important;
 }
 
 .letter-absent {
   border: 2px solid transparent;
   background-color: rgb(162, 162, 162);
-  color: white;
+  color: white !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #404040;
-    color: #e0e0e0;
-  }
+body.dark {
+  background-color: #404040;
+  color: #e0e0e0;
+}
 
-  .Game-keyboard-button {
-    color: #404040;
-  }
-
-  .Row-letter {
-    border: 2px solid rgba(255, 255, 255, 0.4);
-  }
-
-  .letter-correct {
-    border: 2px solid rgba(0, 0, 0, 0.3);
-    color: white;
-  }
-
-  .letter-elsewhere {
-    border: 2px dotted rgba(0, 0, 0, 0.3);
-    color: white;
-  }
-
-  .letter-absent {
-    border: 2px solid transparent;
-    background-color: rgb(142, 142, 142);
-    color: white;
-  }
+body.dark .Game-keyboard-button {
+  color: #404040;
 }
 
 a,
@@ -195,4 +178,24 @@ a:active {
   width: 1px;
   height: 1px;
   overflow: hidden;
+}
+
+.Settings {
+  text-align: left;
+  font-size: 18px;
+}
+
+.Settings-setting {
+  margin: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.Settings-setting input {
+  width: 18px;
+  height: 18px;
+}
+
+.Settings-setting label {
+  margin-inline-start: 8px;
 }

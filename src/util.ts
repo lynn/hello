@@ -47,3 +47,7 @@ export function speak(
     document.body.removeChild(document.getElementById(id)!);
   }, 1000);
 }
+
+export function ordinal(n: number): string {
+  return n + ([, "st", "nd", "rd"][(n % 100 >> 3) ^ 1 && n % 10] || "th");
+}
