@@ -1,85 +1,35 @@
 import "./App.css";
-import { seed } from "./util";
+import { maxGuesses, seed } from "./util";
 import Game from "./Game";
 import { useState } from "react";
-import { Row, RowState } from "./Row";
-import { Clue } from "./clue";
+import { About } from "./About";
 
-const maxGuesses = 6;
-
-function About() {
-  return (
-    <div className="App-about">
-      <p>
-        <i>hello wordl</i> is a remake of the word game{" "}
-        <a href="https://www.powerlanguage.co.uk/wordle/">
-          <i>Wordle</i>
-        </a>{" "}
-        by <a href="https://twitter.com/powerlanguish">powerlanguage</a>, which
-        I think is based on the TV show <i>Lingo</i>.
-      </p>
-      <p>
-        You get {maxGuesses} tries to guess a target word.
-        <br />
-        After each guess, you get Mastermind-style feedback:
-      </p>
-      <Row
-        rowState={RowState.LockedIn}
-        wordLength={4}
-        cluedLetters={[
-          { clue: Clue.Absent, letter: "w" },
-          { clue: Clue.Absent, letter: "o" },
-          { clue: Clue.Correct, letter: "r" },
-          { clue: Clue.Elsewhere, letter: "d" },
-        ]}
-      />
-      <p>
-        <b>W</b> and <b>O</b> aren't in the target word at all.
-        <br />
-        <b>R</b> is correct! The third letter is <b>R</b>
-        .<br />
-        <b>D</b> occurs <em>elsewhere</em> in the target word.
-      </p>
-      <p>
-        Let's move the <b>D</b> in our next guess:
-      </p>
-      <Row
-        rowState={RowState.LockedIn}
-        wordLength={4}
-        cluedLetters={[
-          { clue: Clue.Correct, letter: "d" },
-          { clue: Clue.Correct, letter: "a" },
-          { clue: Clue.Correct, letter: "r" },
-          { clue: Clue.Absent, letter: "k" },
-        ]}
-      />
-      <p>So close!</p>
-      <Row
-        rowState={RowState.LockedIn}
-        wordLength={4}
-        cluedLetters={[
-          { clue: Clue.Correct, letter: "d" },
-          { clue: Clue.Correct, letter: "a" },
-          { clue: Clue.Correct, letter: "r" },
-          { clue: Clue.Correct, letter: "t" },
-        ]}
-      />
-      <p>Got it!</p>
-      <p>
-        Report issues{" "}
-        <a href="https://github.com/lynn/hello-wordl/issues">here</a>, or tweet{" "}
-        <a href="https://twitter.com/chordbug">@chordbug</a>.
-      </p>
-    </div>
-  );
-}
-
-function Settings() {
-  return <>TODO: dark theme, hard mode, etc.</>;
+function useSetting<T>(key: string, initial: T): [T, (value: T | ((t: T) => T)) => void] {
+  const [current, setCurrent] = useState<T>(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initial;
+    } catch (e) {
+      return initial;
+    }
+  });
+  const setSetting = (value: T | ((t: T) => T)) => {
+    try {
+      const v = value instanceof Function ? value(current) : value;
+      setCurrent(v);
+      window.localStorage.setItem(key, JSON.stringify(v));
+    } catch (e) {}
+  };
+  return [current, setSetting];
 }
 
 function App() {
   const [page, setPage] = useState<"game" | "about" | "settings">("game");
+  const prefersDark =
+    window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const [dark, setDark] = useSetting<boolean>("dark", prefersDark);
+  const [hard, setHard] = useSetting<boolean>("hard", false);
+
   return (
     <div className="App-container">
       <h1>hello wordl</h1>
@@ -113,16 +63,36 @@ function App() {
           onClick={() =>
             (document.location = seed
               ? "?"
-              : "?seed=" +
-                new Date().toISOString().replace(/-/g, "").slice(0, 8))
+              : "?seed=" + new Date().toISOString().replace(/-/g, "").slice(0, 8))
           }
         >
           {seed ? "Random" : "Today's"}
         </a>
       </div>
       {page === "about" && <About />}
-      {page === "settings" && <Settings />}
-      <Game maxGuesses={maxGuesses} hidden={page !== "game"} />
+      {page === "settings" && (
+        <div className="Settings">
+          <div className="Settings-setting">
+            <input
+              id="dark-setting"
+              type="checkbox"
+              checked={dark}
+              onChange={() => setDark((x: boolean) => !x)}
+            />
+            <label htmlFor="dark-setting">Dark theme</label>
+          </div>
+          <div className="Settings-setting">
+            <input
+              id="hard-setting"
+              type="checkbox"
+              checked={hard}
+              onChange={() => setHard((x: boolean) => !x)}
+            />
+            <label htmlFor="hard-setting">Hard mode (must use clues)</label>
+          </div>
+        </div>
+      )}
+      <Game maxGuesses={maxGuesses} hidden={page !== "game"} hard={hard} />
     </div>
   );
 }

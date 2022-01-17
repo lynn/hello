@@ -15,6 +15,7 @@ enum GameState {
 interface GameProps {
   maxGuesses: number;
   hidden: boolean;
+  hard: boolean;
 }
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
