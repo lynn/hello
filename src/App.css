@@ -5,7 +5,6 @@
 body {
   text-align: center;
   background-color: #eeeeee;
-  transition: 0.3s background-color ease-out;
 }
 
 .Row {

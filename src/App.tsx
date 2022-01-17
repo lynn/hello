@@ -36,6 +36,9 @@ function App() {
 
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
+    setTimeout(() => {
+      document.body.style.transition = "0.3s background-color ease-out";
+    }, 1);
   }, [dark]);
 
   return (
