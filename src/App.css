@@ -198,3 +198,18 @@ a:active {
 .Settings-setting label {
   margin-inline-start: 8px;
 }
+
+.top-right {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.emoji-link {
+  font-size: 150%;
+  text-decoration: none;
+}
+
+.top-right a + a {
+  margin-inline-start: 8px;
+}

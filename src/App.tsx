@@ -46,19 +46,36 @@ function App() {
       <h1>
         <span style={hard ? { color: "#e66" } : {}}>hell</span>o wordl
       </h1>
-      <div style={{ position: "absolute", right: 5, top: 5 }}>
+      <div className="top-right">
         {page !== "game" ? (
-          <a href="#" onClick={() => setPage("game")}>
-            Close
+          <a
+            className="emoji-link"
+            href="#"
+            onClick={() => setPage("game")}
+            title="Close"
+            aria-label="Close"
+          >
+            ❌
           </a>
         ) : (
           <>
-            <a href="#" onClick={() => setPage("about")}>
-              Help
+            <a
+              className="emoji-link"
+              href="#"
+              onClick={() => setPage("about")}
+              title="About"
+              aria-label="About"
+            >
+              ❓
             </a>
-            {" • "}
-            <a href="#" onClick={() => setPage("settings")}>
-              Settings
+            <a
+              className="emoji-link"
+              href="#"
+              onClick={() => setPage("settings")}
+              title="Settings"
+              aria-label="Settings"
+            >
+              ⚙️
             </a>
           </>
         )}
