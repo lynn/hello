@@ -30,7 +30,6 @@ function Game(props: GameProps) {
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [wordLength, setWordLength] = useState(5);
   const [hint, setHint] = useState<string>(`Make your first guess!`);
-  const [srStatus, setSrStatus] = useState<string>(``);
   const [target, setTarget] = useState(() => {
     resetRng();
     return randomTarget(wordLength);
@@ -59,7 +58,6 @@ function Game(props: GameProps) {
         (guess + key.toLowerCase()).slice(0, wordLength)
       );
       setHint("");
-      setSrStatus("");
     } else if (key === "Backspace") {
       setCurrentGuess((guess) => guess.slice(0, -1));
       setHint("");
@@ -182,9 +180,6 @@ function Game(props: GameProps) {
         <tbody>{tableRows}</tbody>
       </table>
       <p role="alert">{hint || `\u00a0`}</p>
-      {/* <p role="alert" className="Game-sr-feedback">
-        {srStatus}
-      </p> */}
       <Keyboard letterInfo={letterInfo} onKey={onKey} />
       {seed ? (
         <div className="Game-seed-info">

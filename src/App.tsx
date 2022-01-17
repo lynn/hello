@@ -74,17 +74,40 @@ function About() {
   );
 }
 
+function Settings() {
+  return <>TODO: dark theme, hard mode, etc.</>;
+}
+
 function App() {
-  const [about, setAbout] = useState(false);
+  const [page, setPage] = useState<"game" | "about" | "settings">("game");
   return (
     <div className="App-container">
       <h1>hello wordl</h1>
       <div style={{ position: "absolute", right: 5, top: 5 }}>
-        <a href="#" onClick={() => setAbout((a) => !a)}>
-          {about ? "Close" : "About"}
-        </a>
+        {page !== "game" ? (
+          <a href="#" onClick={() => setPage("game")}>
+            Close
+          </a>
+        ) : (
+          <>
+            <a href="#" onClick={() => setPage("about")}>
+              Help
+            </a>
+            {" • "}
+            <a href="#" onClick={() => setPage("settings")}>
+              Settings
+            </a>
+          </>
+        )}
       </div>
-      <div style={{ position: "absolute", left: 5, top: 5 }}>
+      <div
+        style={{
+          position: "absolute",
+          left: 5,
+          top: 5,
+          visibility: page === "game" ? "visible" : "hidden",
+        }}
+      >
         <a
           href="#"
           onClick={() =>
@@ -97,8 +120,9 @@ function App() {
           {seed ? "Random" : "Today's"}
         </a>
       </div>
-      {about && <About />}
-      <Game maxGuesses={maxGuesses} hidden={about} />
+      {page === "about" && <About />}
+      {page === "settings" && <Settings />}
+      <Game maxGuesses={maxGuesses} hidden={page !== "game"} />
     </div>
   );
 }
