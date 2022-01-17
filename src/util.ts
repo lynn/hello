@@ -14,6 +14,12 @@ function mulberry32(a: number) {
 export const seed = Number(
   new URLSearchParams(window.location.search).get("seed")
 );
+
+const challenge = new URLSearchParams(window.location.search).get("challenge");
+export const challengeIndex = challenge
+  ? Number(atob(decodeURIComponent(challenge)))
+  : undefined;
+
 const makeRandom = () => (seed ? mulberry32(seed) : () => Math.random());
 let random = makeRandom();
 
@@ -21,8 +27,10 @@ export function resetRng(): void {
   random = makeRandom();
 }
 
-export function pick<T>(array: Array<T>): T {
-  return array[Math.floor(array.length * random())];
+export function pick<T>(array: Array<T>, index?: number): T {
+  return index === undefined || index > array.length - 1
+    ? array[Math.floor(array.length * random())]
+    : array[index];
 }
 
 // https://a11y-guidelines.orange.com/en/web/components-examples/make-a-screen-reader-talk/

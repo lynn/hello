@@ -4,7 +4,7 @@ import dictionary from "./dictionary.json";
 import { Clue, clue, describeClue } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
-import { dictionarySet, pick, resetRng, seed, speak } from "./util";
+import { challengeIndex, pick, resetRng, seed, speak } from "./util";
 
 enum GameState {
   Playing,
@@ -21,7 +21,7 @@ const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words n
 
 function randomTarget(wordLength: number) {
   const eligible = targets.filter((word) => word.length === wordLength);
-  return pick(eligible);
+  return pick(eligible, challengeIndex);
 }
 
 function Game(props: GameProps) {
@@ -36,6 +36,15 @@ function Game(props: GameProps) {
     return randomTarget(wordLength);
   });
   const [gameNumber, setGameNumber] = useState(1);
+
+  const challengeHash = encodeURIComponent(
+    btoa(
+      targets
+        .filter((word) => word.length === wordLength)
+        .indexOf(target)
+        .toString()
+    )
+  );
 
   const startNextGame = () => {
     setTarget(randomTarget(wordLength));
@@ -191,6 +200,12 @@ function Game(props: GameProps) {
           seed {seed}, length {wordLength}, game {gameNumber}
         </div>
       ) : undefined}
+      {[GameState.Won, GameState.Lost].includes(gameState) && (
+        <div className="Game-challenge-info">
+          <a href={`?challenge=${challengeHash}`}>Challenge a friend</a> with
+          this word
+        </div>
+      )}
     </div>
   );
 }

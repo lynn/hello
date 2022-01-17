@@ -181,7 +181,8 @@ a:active {
   line-height: 1.4;
 }
 
-.Game-seed-info {
+.Game-seed-info,
+.Game-challenge-info {
   opacity: 0.5;
   margin-top: 1em;
   font-variant-numeric: tabular-nums;
