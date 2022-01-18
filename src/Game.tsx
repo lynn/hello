@@ -235,7 +235,7 @@ function Game(props: GameProps) {
           <button
             onClick={() => {
               navigator.clipboard.writeText(getChallengeUrl(target));
-              setHint("Challenge link to clipboard!");
+              setHint("Challenge link copied to clipboard!");
             }}
           >
             Challenge a friend to this word
