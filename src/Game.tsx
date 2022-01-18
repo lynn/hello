@@ -4,7 +4,8 @@ import dictionary from "./dictionary.json";
 import { Clue, clue, describeClue, violation } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
-import { dictionarySet, pick, resetRng, seed, speak } from "./util";
+import { pick, resetRng, seed, speak, urlParam } from "./util";
+import { decode, encode } from "./base64";
 
 enum GameState {
   Playing,
@@ -20,24 +21,54 @@ interface GameProps {
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
 
-function randomTarget(wordLength: number) {
+function randomTarget(wordLength: number): string {
   const eligible = targets.filter((word) => word.length === wordLength);
   return pick(eligible);
+}
+
+function getChallengeUrl(target: string): string {
+  return window.location.href.replace(
+    /(\?.*)?$/,
+    "?challenge=" + encode(target)
+  );
+}
+
+let challengeString = "";
+let challengeError = false;
+try {
+  challengeString = decode(urlParam("challenge") ?? "").toLowerCase();
+} catch (e) {
+  console.warn(e);
+  challengeError = true;
+}
+if (challengeString && !targets.includes(challengeString)) {
+  challengeString = "";
+  challengeError = true;
 }
 
 function Game(props: GameProps) {
   const [gameState, setGameState] = useState(GameState.Playing);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
-  const [wordLength, setWordLength] = useState(5);
-  const [hint, setHint] = useState<string>(`Make your first guess!`);
+  const [hint, setHint] = useState<string>(
+    challengeError
+      ? `Invalid challenge string, playing random game.`
+      : `Make your first guess!`
+  );
+  const [challenge, setChallenge] = useState<string>(challengeString);
+  const [wordLength, setWordLength] = useState(
+    challenge ? challenge.length : 5
+  );
   const [target, setTarget] = useState(() => {
     resetRng();
-    return randomTarget(wordLength);
+    return challenge || randomTarget(wordLength);
   });
   const [gameNumber, setGameNumber] = useState(1);
-
   const startNextGame = () => {
+    if (challenge) {
+      window.history.replaceState("", "", "/");
+    }
+    setChallenge("");
     setTarget(randomTarget(wordLength));
     setGuesses([]);
     setCurrentGuess("");
@@ -87,15 +118,17 @@ function Game(props: GameProps) {
       }
       setGuesses((guesses) => guesses.concat([currentGuess]));
       setCurrentGuess((guess) => "");
+
+      const gameOver = (verbed: string) =>
+        `You ${verbed}! The answer was ${target.toUpperCase()}. (Enter to ${
+          challenge ? "play a random game" : "play again"
+        })`;
+
       if (currentGuess === target) {
-        setHint(
-          `You won! The answer was ${target.toUpperCase()}. (Enter to play again)`
-        );
+        setHint(gameOver("won"));
         setGameState(GameState.Won);
       } else if (guesses.length + 1 === props.maxGuesses) {
-        setHint(
-          `You lost! The answer was ${target.toUpperCase()}. (Enter to play again)`
-        );
+        setHint(gameOver("lost"));
         setGameState(GameState.Lost);
       } else {
         setHint("");
@@ -162,7 +195,7 @@ function Game(props: GameProps) {
           id="wordLength"
           disabled={
             gameState === GameState.Playing &&
-            (guesses.length > 0 || currentGuess !== "")
+            (guesses.length > 0 || currentGuess !== "" || challenge !== "")
           }
           value={wordLength}
           onChange={(e) => {
@@ -196,7 +229,21 @@ function Game(props: GameProps) {
       </table>
       <p role="alert">{hint || `\u00a0`}</p>
       <Keyboard letterInfo={letterInfo} onKey={onKey} />
-      {seed ? (
+      {gameState !== GameState.Playing && !challenge && (
+        <p>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(getChallengeUrl(target));
+              setHint("Challenge link to clipboard!");
+            }}
+          >
+            Challenge a friend to this word
+          </button>
+        </p>
+      )}
+      {challenge ? (
+        <div className="Game-seed-info">playing a challenge game</div>
+      ) : seed ? (
         <div className="Game-seed-info">
           seed {seed}, length {wordLength}, game {gameNumber}
         </div>
