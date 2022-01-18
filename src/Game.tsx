@@ -66,7 +66,8 @@ function Game(props: GameProps) {
   const [gameNumber, setGameNumber] = useState(1);
   const startNextGame = () => {
     if (challenge) {
-      window.history.replaceState("", "", "/");
+      // Clear the URL parameters:
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
     setChallenge("");
     setTarget(randomTarget(wordLength));
