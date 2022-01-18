@@ -27,10 +27,7 @@ function randomTarget(wordLength: number): string {
 }
 
 function getChallengeUrl(target: string): string {
-  return window.location.href.replace(
-    /(\?.*)?$/,
-    "?challenge=" + encode(target)
-  );
+  return window.location.origin + window.location.pathname + "?challenge=" + encode(target);
 }
 
 let challengeString = "";
