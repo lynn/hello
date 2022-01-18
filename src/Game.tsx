@@ -228,7 +228,12 @@ function Game(props: GameProps) {
       <table className="Game-rows" tabIndex={0} aria-label="Table of guesses">
         <tbody>{tableRows}</tbody>
       </table>
-      <p role="alert">{hint || `\u00a0`}</p>
+      <p
+        role="alert"
+        style={{ userSelect: /http:/.test(hint) ? "text" : "none" }}
+      >
+        {hint || `\u00a0`}
+      </p>
       <Keyboard letterInfo={letterInfo} onKey={onKey} />
       {gameState !== GameState.Playing && !challenge && (
         <p>
