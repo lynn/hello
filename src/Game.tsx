@@ -234,8 +234,19 @@ function Game(props: GameProps) {
         <p>
           <button
             onClick={() => {
-              navigator.clipboard.writeText(getChallengeUrl(target));
-              setHint("Challenge link copied to clipboard!");
+              const url = getChallengeUrl(target);
+              if (!navigator.clipboard) {
+                setHint(url);
+              } else {
+                navigator.clipboard
+                  .writeText(url)
+                  .then(() => {
+                    setHint("Challenge link copied to clipboard!");
+                  })
+                  .catch(() => {
+                    setHint(url);
+                  });
+              }
             }}
           >
             Challenge a friend to this word

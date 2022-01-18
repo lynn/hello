@@ -1,7 +1,7 @@
 {
   "name": "wordl",
   "version": "0.1.0",
-  "homepage": "https://lynn.github.io/hello-wordl",
+  "homepage": "http://hellowordl.net/",
   "private": false,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.1",
