@@ -10,6 +10,7 @@ interface RowProps {
   rowState: RowState;
   wordLength: number;
   cluedLetters: CluedLetter[];
+  annotation?: string;
 }
 
 export function Row(props: RowProps) {
@@ -41,5 +42,12 @@ export function Row(props: RowProps) {
     });
   let rowClass = "Row";
   if (isLockedIn) rowClass += " Row-locked-in";
-  return <tr className={rowClass}>{letterDivs}</tr>;
+  return (
+    <tr className={rowClass}>
+      {letterDivs}
+      {props.annotation && (
+        <span className="Row-annotation">{props.annotation}</span>
+      )}
+    </tr>
+  );
 }

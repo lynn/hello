@@ -9,6 +9,7 @@ body {
 
 .Row {
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 
@@ -24,6 +25,12 @@ body {
   align-items: center;
   text-transform: uppercase;
   font-weight: bold;
+}
+
+.Row-annotation {
+  margin-inline-start: 16px;
+  width: 5em;
+  text-align: start;
 }
 
 .App-container {
@@ -161,6 +168,21 @@ a:active {
 .App-about {
   margin-top: -1rem;
   line-height: 1.4;
+}
+
+.App-about b {
+  background-color: #888;
+  color: white;
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+
+.App-about b.green-bg {
+  background-color: rgb(87, 172, 120);
+}
+
+.App-about b.yellow-bg {
+  background-color: #e9c601;
 }
 
 .Game-seed-info {
