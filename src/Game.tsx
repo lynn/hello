@@ -26,6 +26,14 @@ function randomTarget(wordLength: number): string {
   return pick(eligible);
 }
 
+function calculateDuration(wordLength: number): number {
+  const computedStyle = getComputedStyle(document.documentElement)
+  const flipDuration = computedStyle.getPropertyValue('--letter-flip-duration');
+  const rowOffset = computedStyle.getPropertyValue('--animation-row-offset');
+
+  return (wordLength - 1) * parseInt(rowOffset) + parseInt(flipDuration);
+}
+
 function getChallengeUrl(target: string): string {
   return window.location.origin + window.location.pathname + "?challenge=" + encode(target);
 }
@@ -56,11 +64,15 @@ function Game(props: GameProps) {
   const [wordLength, setWordLength] = useState(
     challenge ? challenge.length : 5
   );
+  const [timeBetweenGuesses, setTimeBetweenGuesses] = useState(() => {
+    return calculateDuration(wordLength);
+  });
   const [target, setTarget] = useState(() => {
     resetRng();
     return challenge || randomTarget(wordLength);
   });
   const [gameNumber, setGameNumber] = useState(1);
+  const [keyboardDisabled, setKeyboardDisabled] = useState(false);
   const startNextGame = () => {
     if (challenge) {
       // Clear the URL parameters:
@@ -68,6 +80,7 @@ function Game(props: GameProps) {
     }
     setChallenge("");
     setTarget(randomTarget(wordLength));
+    setTimeBetweenGuesses(calculateDuration(wordLength));
     setGuesses([]);
     setCurrentGuess("");
     setHint("");
@@ -114,12 +127,15 @@ function Game(props: GameProps) {
           }
         }
       }
+
+      setKeyboardDisabled(true);
+      setTimeout(() => setKeyboardDisabled(false), 2000);
+
       setGuesses((guesses) => guesses.concat([currentGuess]));
       setCurrentGuess((guess) => "");
 
       const gameOver = (verbed: string) =>
-        `You ${verbed}! The answer was ${target.toUpperCase()}. (Enter to ${
-          challenge ? "play a random game" : "play again"
+        `You ${verbed}! The answer was ${target.toUpperCase()}. (Enter to ${challenge ? "play a random game" : "play again"
         })`;
 
       if (currentGuess === target) {
@@ -144,11 +160,19 @@ function Game(props: GameProps) {
         e.preventDefault();
       }
     };
-    document.addEventListener("keydown", onKeyDown);
+
+    if (!keyboardDisabled) {
+      document.addEventListener("keydown", onKeyDown);
+    }
+
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [currentGuess, gameState]);
+  }, [currentGuess, gameState, keyboardDisabled]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--keyboard-transition-delay', timeBetweenGuesses + "ms");
+  }, [timeBetweenGuesses])
 
   let letterInfo = new Map<string, Clue>();
   const tableRows = Array(props.maxGuesses)
@@ -174,8 +198,8 @@ function Game(props: GameProps) {
             lockedIn
               ? RowState.LockedIn
               : i === guesses.length
-              ? RowState.Editing
-              : RowState.Pending
+                ? RowState.Editing
+                : RowState.Pending
           }
           cluedLetters={cluedLetters}
         />
@@ -231,7 +255,7 @@ function Game(props: GameProps) {
       >
         {hint || `\u00a0`}
       </p>
-      <Keyboard letterInfo={letterInfo} onKey={onKey} />
+      <Keyboard letterInfo={letterInfo} onKey={onKey} disabled={keyboardDisabled} />
       {gameState !== GameState.Playing && !challenge && (
         <p>
           <button

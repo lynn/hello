@@ -1,3 +1,9 @@
+:root {
+  --letter-flip-duration: 500ms;
+  --letter-transition-delay: 250ms;
+  --animation-row-offset: 125ms;
+}
+
 body {
   margin: 10px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Bylynn Sans', 'Oxygen',

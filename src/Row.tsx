@@ -24,6 +24,9 @@ export function Row(props: RowProps) {
       if (isLockedIn && clue !== undefined) {
         letterClass += " " + clueClass(clue);
       }
+      if (letter) {
+        letterClass += " already-typed"
+      }
       return (
         <td
           key={i}
@@ -32,7 +35,7 @@ export function Row(props: RowProps) {
           aria-label={
             isLockedIn
               ? letter.toUpperCase() +
-                (clue === undefined ? "" : ": " + clueWord(clue))
+              (clue === undefined ? "" : ": " + clueWord(clue))
               : ""
           }
         >

@@ -100,6 +100,10 @@ table.Game-rows > tbody {
   cursor: pointer;
 }
 
+.Game-keyboard-button.disabled {
+  pointer-events: none;
+}
+
 .Game-keyboard-button-wide {
   flex: 2;
 }
@@ -234,4 +238,82 @@ a:active {
 
 .top-right a + a {
   margin-inline-start: 8px;
+}
+
+/* Animations */
+
+@keyframes flip {
+  0% { transform: scaleY(1) }
+  50% { transform: scaleY(0) }
+  100% { transform: scaleY(1) }
+}
+
+@keyframes bump {
+  0% { transform: scale(1) }
+  50% { transform: scale(1.2) }
+  100% { transform: scale(1) }
+}
+
+.already-typed {
+  animation: bump 200ms ease 1 forwards;
+}
+
+.Game-keyboard-button {
+  transition-delay: var(--keyboard-transition-delay, 0ms);
+  transition-property: border, background-color, color;
+}
+
+.Row-letter:is(.letter-correct, .letter-elsewhere, .letter-absent):nth-child(1) {
+  animation: flip var(--letter-flip-duration) ease 0ms 1 forwards;
+  transition-delay: var(--letter-transition-delay);
+}
+
+.Row-letter:is(.letter-correct, .letter-elsewhere, .letter-absent):nth-child(2) {
+  animation: flip var(--letter-flip-duration) ease var(--animation-row-offset) 1 forwards;
+  transition-delay: calc(var(--animation-row-offset) + var(--letter-transition-delay));
+}
+
+.Row-letter:is(.letter-correct, .letter-elsewhere, .letter-absent):nth-child(3) {
+  animation: flip var(--letter-flip-duration) ease calc(2 * var(--animation-row-offset)) 1 forwards;
+  transition-delay: calc(2 * var(--animation-row-offset) + var(--letter-transition-delay));
+}
+
+.Row-letter:is(.letter-correct, .letter-elsewhere, .letter-absent):nth-child(4) {
+  animation: flip var(--letter-flip-duration) ease calc(3 * var(--animation-row-offset)) 1 forwards;
+  transition-delay: calc(3 * var(--animation-row-offset) + var(--letter-transition-delay));
+}
+
+.Row-letter:is(.letter-correct, .letter-elsewhere, .letter-absent):nth-child(5) {
+  animation: flip var(--letter-flip-duration) ease calc(4 * var(--animation-row-offset)) 1 forwards;
+  transition-delay: calc(4 * var(--animation-row-offset) + var(--letter-transition-delay));
+}
+
+.Row-letter:is(.letter-correct, .letter-elsewhere, .letter-absent):nth-child(6) {
+  animation: flip var(--letter-flip-duration) ease calc(5 * var(--animation-row-offset)) 1 forwards;
+  transition-delay: calc(5 * var(--animation-row-offset) + var(--letter-transition-delay));
+}
+
+.Row-letter:is(.letter-correct, .letter-elsewhere, .letter-absent):nth-child(7) {
+  animation: flip var(--letter-flip-duration) ease calc(6 * var(--animation-row-offset)) 1 forwards;
+  transition-delay: calc(6 * var(--animation-row-offset) + var(--letter-transition-delay));
+}
+
+.Row-letter:is(.letter-correct, .letter-elsewhere, .letter-absent):nth-child(8) {
+  animation: flip var(--letter-flip-duration) ease calc(7 * var(--animation-row-offset)) 1 forwards;
+  transition-delay: calc(7 * var(--animation-row-offset) + var(--letter-transition-delay));
+}
+
+.Row-letter:is(.letter-correct, .letter-elsewhere, .letter-absent):nth-child(9) {
+  animation: flip var(--letter-flip-duration) ease calc(8 * var(--animation-row-offset)) 1 forwards;
+  transition-delay: calc(8 * var(--animation-row-offset) + var(--letter-transition-delay));
+}
+
+.Row-letter:is(.letter-correct, .letter-elsewhere, .letter-absent):nth-child(10) {
+  animation: flip var(--letter-flip-duration) ease calc(9 * var(--animation-row-offset)) 1 forwards;
+  transition-delay: calc(9 * var(--animation-row-offset) + var(--letter-transition-delay));
+}
+
+.Row-letter:is(.letter-correct, .letter-elsewhere, .letter-absent):nth-child(11) {
+  animation: flip var(--letter-flip-duration) ease calc(10 * var(--animation-row-offset)) 1 forwards;
+  transition-delay: calc(10 * var(--animation-row-offset) + var(--letter-transition-delay));
 }
