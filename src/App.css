@@ -119,7 +119,7 @@ table.Game-rows > tbody {
 }
 
 .letter-elsewhere {
-  border: 2px dotted rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(0, 0, 0, 0.3);
   background-color: #e9c601;
   color: white !important;
 }
