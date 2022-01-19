@@ -31,7 +31,7 @@ function calculateDuration(wordLength: number): number {
   const flipDuration = computedStyle.getPropertyValue('--letter-flip-duration');
   const rowOffset = computedStyle.getPropertyValue('--animation-row-offset');
 
-  return (wordLength - 1) * parseInt(rowOffset) + parseInt(flipDuration);
+  return wordLength * parseInt(rowOffset) + parseInt(flipDuration);
 }
 
 function getChallengeUrl(target: string): string {
@@ -228,6 +228,7 @@ function Game(props: GameProps) {
             setGuesses([]);
             setCurrentGuess("");
             setTarget(randomTarget(length));
+            setTimeBetweenGuesses(calculateDuration(length));
             setWordLength(length);
             setHint(`${length} letters`);
           }}
