@@ -4,7 +4,7 @@ import dictionary from "./dictionary.json";
 import { Clue, clue, describeClue, violation } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
-import { pick, resetRng, seed, speak, urlParam } from "./util";
+import { dictionarySet, pick, resetRng, seed, speak, urlParam } from "./util";
 import { decode, encode } from "./base64";
 
 enum GameState {
@@ -31,19 +31,24 @@ function randomTarget(wordLength: number): string {
 }
 
 function getChallengeUrl(target: string): string {
-  return window.location.origin + window.location.pathname + "?challenge=" + encode(target);
+  return (
+    window.location.origin +
+    window.location.pathname +
+    "?challenge=" +
+    encode(target)
+  );
 }
 
-let challengeString = "";
+let initChallenge = "";
 let challengeError = false;
 try {
-  challengeString = decode(urlParam("challenge") ?? "").toLowerCase();
+  initChallenge = decode(urlParam("challenge") ?? "").toLowerCase();
 } catch (e) {
   console.warn(e);
   challengeError = true;
 }
-if (challengeString && !targets.includes(challengeString)) {
-  challengeString = "";
+if (initChallenge && !dictionarySet.has(initChallenge)) {
+  initChallenge = "";
   challengeError = true;
 }
 
@@ -56,7 +61,7 @@ function Game(props: GameProps) {
       ? `Invalid challenge string, playing random game.`
       : `Make your first guess!`
   );
-  const [challenge, setChallenge] = useState<string>(challengeString);
+  const [challenge, setChallenge] = useState<string>(initChallenge);
   const [wordLength, setWordLength] = useState(
     challenge ? challenge.length : 5
   );
