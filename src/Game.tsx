@@ -129,7 +129,7 @@ function Game(props: GameProps) {
       }
 
       setKeyboardDisabled(true);
-      setTimeout(() => setKeyboardDisabled(false), 2000);
+      setTimeout(() => setKeyboardDisabled(false), timeBetweenGuesses);
 
       setGuesses((guesses) => guesses.concat([currentGuess]));
       setCurrentGuess((guess) => "");
