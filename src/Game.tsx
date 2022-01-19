@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Row, RowState } from "./Row";
 import dictionary from "./dictionary.json";
 import { Clue, clue, describeClue, violation } from "./clue";
@@ -70,6 +70,7 @@ function Game(props: GameProps) {
     return challenge || randomTarget(wordLength);
   });
   const [gameNumber, setGameNumber] = useState(1);
+  const tableRef = useRef<HTMLTableElement>(null);
   const startNextGame = () => {
     if (challenge) {
       // Clear the URL parameters:
@@ -96,11 +97,7 @@ function Game(props: GameProps) {
       setCurrentGuess((guess) =>
         (guess + key.toLowerCase()).slice(0, wordLength)
       );
-      // When typing a guess, make sure a later "Enter" press won't activate a link or button.
-      const active = document.activeElement as HTMLElement;
-      if (active && ["A", "BUTTON"].includes(active.tagName)) {
-        active.blur();
-      }
+      tableRef.current?.focus();
       setHint("");
     } else if (key === "Backspace") {
       setCurrentGuess((guess) => guess.slice(0, -1));
@@ -231,7 +228,12 @@ function Game(props: GameProps) {
           Give up
         </button>
       </div>
-      <table className="Game-rows" tabIndex={0} aria-label="Table of guesses">
+      <table
+        className="Game-rows"
+        tabIndex={0}
+        aria-label="Table of guesses"
+        ref={tableRef}
+      >
         <tbody>{tableRows}</tbody>
       </table>
       <p
