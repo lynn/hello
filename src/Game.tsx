@@ -23,7 +23,11 @@ const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words n
 
 function randomTarget(wordLength: number): string {
   const eligible = targets.filter((word) => word.length === wordLength);
-  return pick(eligible);
+  let candidate: string;
+  do {
+    candidate = pick(eligible);
+  } while (/\*/.test(candidate));
+  return candidate;
 }
 
 function getChallengeUrl(target: string): string {
