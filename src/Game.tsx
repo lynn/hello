@@ -238,7 +238,7 @@ function Game(props: GameProps) {
       </table>
       <p
         role="alert"
-        style={{ userSelect: /http:/.test(hint) ? "text" : "none" }}
+        style={{ userSelect: /https?:/.test(hint) ? "text" : "none" }}
       >
         {hint || `\u00a0`}
       </p>
