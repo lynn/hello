@@ -1,9 +1,7 @@
 # hello wordl
 It's [Wordle](https://www.powerlanguage.co.uk/wordle/) but you can play forever!
 
-Play it [here](https://hellowordl.net/).
-
-**Note (January 18)**: I am moving the site to a new domain name and it's causing some turbulence. If the link above tells you it's unsafe, try [here](http://hellowordl.net/). If it shows a blank page, try clearing your cache.
+Play it [**here**](https://hellowordl.net/).
 
 ## Introduction
 Wordle is a word game similar to the TV show [Lingo](https://en.wikipedia.org/wiki/Lingo_(British_game_show)).
