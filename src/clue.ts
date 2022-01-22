@@ -71,9 +71,9 @@ export function violation(
     const upper = letter.toUpperCase();
     const nth = ordinal(i + 1);
     if (clue === Clue.Absent) {
-      if (difficulty === Difficulty.UltraHard && guess.includes(letter)) {
-        return "Guess can't contain " + upper;
-      }
+      // if (difficulty === Difficulty.UltraHard && guess.includes(letter)) {
+      //   return "Guess can't contain " + upper;
+      // }
     } else if (clue === Clue.Correct) {
       if (guess[i] !== letter) {
         return nth + " letter must be " + upper;

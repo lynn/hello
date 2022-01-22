@@ -138,7 +138,7 @@ function App() {
                   [
                     `No restrictions on guesses.`,
                     `Wordle's "Hard Mode". Green letters must stay fixed, and yellow letters must be reused.`,
-                    `An even stricter Hard Mode. Yellow letters must move away, and gray letters can't be reused.`,
+                    `An even stricter Hard Mode. Yellow letters must move away from where they were clued.`,
                   ][difficulty]
                 }
               </div>
