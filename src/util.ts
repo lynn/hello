@@ -1,5 +1,11 @@
 import dictionary from "./dictionary.json";
 
+export enum Difficulty {
+  Normal,
+  Hard,
+  UltraHard,
+}
+
 export const maxGuesses = 6;
 
 export const dictionarySet: Set<string> = new Set(dictionary);

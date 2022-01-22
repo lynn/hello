@@ -209,11 +209,16 @@ a:active {
 .Settings-setting {
   margin: 8px;
   display: flex;
-  align-items: center;
+  align-items: top;
 }
 
 .Settings-setting input {
   width: 18px;
+  height: 18px;
+}
+
+.Settings-setting input[type=range] {
+  width: 50px;
   height: 18px;
 }
 

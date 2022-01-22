@@ -4,7 +4,15 @@ import dictionary from "./dictionary.json";
 import { Clue, clue, describeClue, violation } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
-import { dictionarySet, pick, resetRng, seed, speak, urlParam } from "./util";
+import {
+  dictionarySet,
+  Difficulty,
+  pick,
+  resetRng,
+  seed,
+  speak,
+  urlParam,
+} from "./util";
 import { decode, encode } from "./base64";
 
 enum GameState {
@@ -16,7 +24,7 @@ enum GameState {
 interface GameProps {
   maxGuesses: number;
   hidden: boolean;
-  hard: boolean;
+  difficulty: Difficulty;
 }
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
@@ -111,13 +119,12 @@ function Game(props: GameProps) {
         setHint("Not a valid word");
         return;
       }
-      if (props.hard) {
-        for (const g of guesses) {
-          const feedback = violation(clue(g, target), currentGuess);
-          if (feedback) {
-            setHint(feedback);
-            return;
-          }
+      for (const g of guesses) {
+        const c = clue(g, target);
+        const feedback = violation(props.difficulty, c, currentGuess);
+        if (feedback) {
+          setHint(feedback);
+          return;
         }
       }
       setGuesses((guesses) => guesses.concat([currentGuess]));

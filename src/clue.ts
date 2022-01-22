@@ -1,4 +1,4 @@
-import { ordinal } from "./util";
+import { Difficulty, ordinal } from "./util";
 
 export enum Clue {
   Absent,
@@ -59,21 +59,31 @@ export function describeClue(clue: CluedLetter[]): string {
 }
 
 export function violation(
+  difficulty: Difficulty,
   clues: CluedLetter[],
   guess: string
 ): string | undefined {
+  if (difficulty === Difficulty.Normal) {
+    return undefined;
+  }
   let i = 0;
   for (const { letter, clue } of clues) {
+    const upper = letter.toUpperCase();
+    const nth = ordinal(i + 1);
     if (clue === Clue.Absent) {
-      // Apparently Wordle doesn't enforce this?
-      // if (guess.includes(letter))
-      //   return "Guess can't contain " + letter.toUpperCase();
+      if (difficulty === Difficulty.UltraHard && guess.includes(letter)) {
+        return "Guess can't contain " + upper;
+      }
     } else if (clue === Clue.Correct) {
-      if (guess[i] !== letter)
-        return ordinal(i + 1) + " letter must be " + letter.toUpperCase();
+      if (guess[i] !== letter) {
+        return nth + " letter must be " + upper;
+      }
     } else if (clue === Clue.Elsewhere) {
-      if (!guess.includes(letter))
-        return "Guess must contain " + letter.toUpperCase();
+      if (!guess.includes(letter)) {
+        return "Guess must contain " + upper;
+      } else if (difficulty === Difficulty.UltraHard && guess[i] === letter) {
+        return nth + " letter can't be " + upper;
+      }
     }
     ++i;
   }

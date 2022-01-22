@@ -27,12 +27,13 @@ function useSetting<T>(
 }
 
 function App() {
-  const [page, setPage] = useState<"game" | "about" | "settings">("game");
+  type Page = "game" | "about" | "settings";
+  const [page, setPage] = useState<Page>("game");
   const prefersDark =
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches;
   const [dark, setDark] = useSetting<boolean>("dark", prefersDark);
-  const [hard, setHard] = useSetting<boolean>("hard", false);
+  const [difficulty, setDifficulty] = useSetting<number>("difficulty", 0);
 
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
@@ -41,42 +42,42 @@ function App() {
     }, 1);
   }, [dark]);
 
+  const link = (emoji: string, label: string, page: Page) => (
+    <a
+      className="emoji-link"
+      href="#"
+      onClick={() => setPage(page)}
+      title={label}
+      aria-label={label}
+    >
+      {emoji}
+    </a>
+  );
+
   return (
     <div className="App-container">
       <h1>
-        <span style={hard ? { color: "#e66" } : {}}>hell</span>o wordl
+        <span
+          style={
+            difficulty > 0
+              ? {
+                  color: "#e66",
+                  textShadow: difficulty > 1 ? "0px 0px 5px #e66" : "none",
+                }
+              : {}
+          }
+        >
+          hell
+        </span>
+        o wordl
       </h1>
       <div className="top-right">
         {page !== "game" ? (
-          <a
-            className="emoji-link"
-            href="#"
-            onClick={() => setPage("game")}
-            title="Close"
-            aria-label="Close"
-          >
-            ❌
-          </a>
+          link("❌", "Close", "game")
         ) : (
           <>
-            <a
-              className="emoji-link"
-              href="#"
-              onClick={() => setPage("about")}
-              title="About"
-              aria-label="About"
-            >
-              ❓
-            </a>
-            <a
-              className="emoji-link"
-              href="#"
-              onClick={() => setPage("settings")}
-              title="Settings"
-              aria-label="Settings"
-            >
-              ⚙️
-            </a>
+            {link("❓", "About", "about")}
+            {link("⚙️", "Settings", "settings")}
           </>
         )}
       </div>
@@ -114,16 +115,42 @@ function App() {
           </div>
           <div className="Settings-setting">
             <input
-              id="hard-setting"
-              type="checkbox"
-              checked={hard}
-              onChange={() => setHard((x: boolean) => !x)}
+              id="difficulty-setting"
+              type="range"
+              min="0"
+              max="2"
+              value={difficulty}
+              onChange={(e) => setDifficulty(+e.target.value)}
             />
-            <label htmlFor="hard-setting">Hard mode (must use all clues)</label>
+            <div>
+              <label htmlFor="difficulty-setting">Difficulty:</label>
+              &nbsp;
+              <strong>{["Normal", "Hard", "Ultra Hard"][difficulty]}</strong>
+              <div
+                style={{
+                  fontSize: 14,
+                  height: 40,
+                  marginLeft: 8,
+                  marginTop: 8,
+                }}
+              >
+                {
+                  [
+                    `No restrictions on guesses.`,
+                    `Wordle's "Hard Mode". Green letters must stay fixed, and yellow letters must be reused.`,
+                    `An even stricter Hard Mode. Yellow letters must move away, and gray letters can't be reused.`,
+                  ][difficulty]
+                }
+              </div>
+            </div>
           </div>
         </div>
       )}
-      <Game maxGuesses={maxGuesses} hidden={page !== "game"} hard={hard} />
+      <Game
+        maxGuesses={maxGuesses}
+        hidden={page !== "game"}
+        difficulty={difficulty}
+      />
     </div>
   );
 }
