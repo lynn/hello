@@ -1,4 +1,4 @@
-import { Difficulty, ordinal } from "./util";
+import { Difficulty, englishNumbers, ordinal } from "./util";
 
 export enum Clue {
   Absent,
@@ -71,9 +71,17 @@ export function violation(
     const upper = letter.toUpperCase();
     const nth = ordinal(i + 1);
     if (clue === Clue.Absent) {
-      // if (difficulty === Difficulty.UltraHard && guess.includes(letter)) {
-      //   return "Guess can't contain " + upper;
-      // }
+      if (difficulty === Difficulty.UltraHard) {
+        const max = clues.filter(
+          (c) => c.letter === letter && c.clue !== Clue.Absent
+        ).length;
+        const count = guess.split(letter).length - 1;
+        if (count > max) {
+          const amount = max ? `more than ${englishNumbers[max]} ` : "";
+          const s = max > 1 ? "s" : "";
+          return `Guess can't contain ${amount}${upper}${s}`;
+        }
+      }
     } else if (clue === Clue.Correct) {
       if (guess[i] !== letter) {
         return nth + " letter must be " + upper;

@@ -38,6 +38,7 @@ function App() {
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
     setTimeout(() => {
+      // Avoid transition on page load
       document.body.style.transition = "0.3s background-color ease-out";
     }, 1);
   }, [dark]);
@@ -58,14 +59,10 @@ function App() {
     <div className="App-container">
       <h1>
         <span
-          style={
-            difficulty > 0
-              ? {
-                  color: "#e66",
-                  textShadow: difficulty > 1 ? "0px 0px 5px #e66" : "none",
-                }
-              : {}
-          }
+          style={{
+            color: difficulty > 0 ? "#e66" : "inherit",
+            fontStyle: difficulty > 1 ? "italic" : "inherit",
+          }}
         >
           hell
         </span>
@@ -136,9 +133,9 @@ function App() {
               >
                 {
                   [
-                    `No restrictions on guesses.`,
+                    `Guesses must be valid dictionary words.`,
                     `Wordle's "Hard Mode". Green letters must stay fixed, and yellow letters must be reused.`,
-                    `An even stricter Hard Mode. Yellow letters must move away from where they were clued.`,
+                    `An even stricter Hard Mode. Yellow letters must move away from where they were clued, and gray clues must be obeyed.`,
                   ][difficulty]
                 }
               </div>
