@@ -34,6 +34,7 @@ function App() {
     window.matchMedia("(prefers-color-scheme: dark)").matches;
   const [dark, setDark] = useSetting<boolean>("dark", prefersDark);
   const [difficulty, setDifficulty] = useSetting<number>("difficulty", 0);
+  const [shareResult, setShareResult] = useSetting<boolean>("share", false);
 
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
@@ -141,12 +142,22 @@ function App() {
               </div>
             </div>
           </div>
+          <div className="Settings-setting">
+            <input
+              id="share-setting"
+              type="checkbox"
+              checked={shareResult}
+              onChange={() => setShareResult((x: boolean) => !x)}
+            />
+            <label htmlFor="share-setting">Share result with challenge URL</label>
+          </div>
         </div>
       )}
       <Game
         maxGuesses={maxGuesses}
         hidden={page !== "game"}
         difficulty={difficulty}
+        shareResult={shareResult}
       />
     </div>
   );

@@ -25,9 +25,11 @@ interface GameProps {
   maxGuesses: number;
   hidden: boolean;
   difficulty: Difficulty;
+  shareResult: boolean;
 }
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
+const emoji = ["⬛", "🟨", "🟩"];
 
 function randomTarget(wordLength: number): string {
   const eligible = targets.filter((word) => word.length === wordLength);
@@ -258,8 +260,15 @@ function Game(props: GameProps) {
               if (!navigator.clipboard) {
                 setHint(url);
               } else {
+                const result: string = tableRows
+                  .map(({ props }) =>
+                    props.cluedLetters
+                      .map(({ clue }: { clue: number }) => emoji[clue])
+                      .join("")
+                  )
+                  .join("\n");
                 navigator.clipboard
-                  .writeText(url)
+                  .writeText(props.shareResult ? `${result}\n${url}` : url)
                   .then(() => {
                     setHint("Challenge link copied to clipboard!");
                   })
