@@ -72,6 +72,9 @@ export function violation(
     const nth = ordinal(i + 1);
     if (clue === Clue.Absent) {
       if (difficulty === Difficulty.UltraHard) {
+        if (guess[i] === letter) {
+          return nth + " letter can't be " + upper;
+        }
         const max = clues.filter(
           (c) => c.letter === letter && c.clue !== Clue.Absent
         ).length;
