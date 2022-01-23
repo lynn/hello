@@ -28,6 +28,8 @@ interface GameProps {
 }
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
+const minWordLength = 4;
+const maxWordLength = 11;
 
 function randomTarget(wordLength: number): string {
   const eligible = targets.filter((word) => word.length === wordLength);
@@ -85,7 +87,10 @@ function Game(props: GameProps) {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
     setChallenge("");
-    setTarget(randomTarget(wordLength));
+    const newWordLength =
+      wordLength < minWordLength || wordLength > maxWordLength ? 5 : wordLength;
+    setWordLength(newWordLength);
+    setTarget(randomTarget(newWordLength));
     setGuesses([]);
     setCurrentGuess("");
     setHint("");
@@ -201,8 +206,8 @@ function Game(props: GameProps) {
         <label htmlFor="wordLength">Letters:</label>
         <input
           type="range"
-          min="4"
-          max="11"
+          min={minWordLength}
+          max={maxWordLength}
           id="wordLength"
           disabled={
             gameState === GameState.Playing &&

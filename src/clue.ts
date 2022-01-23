@@ -70,30 +70,40 @@ export function violation(
   for (const { letter, clue } of clues) {
     const upper = letter.toUpperCase();
     const nth = ordinal(i + 1);
-    if (clue === Clue.Absent) {
-      if (difficulty === Difficulty.UltraHard) {
-        if (guess[i] === letter) {
-          return nth + " letter can't be " + upper;
-        }
-        const max = clues.filter(
-          (c) => c.letter === letter && c.clue !== Clue.Absent
-        ).length;
-        const count = guess.split(letter).length - 1;
-        if (count > max) {
-          const amount = max ? `more than ${englishNumbers[max]} ` : "";
-          const s = max > 1 ? "s" : "";
-          return `Guess can't contain ${amount}${upper}${s}`;
-        }
-      }
-    } else if (clue === Clue.Correct) {
+    if (clue === Clue.Correct) {
       if (guess[i] !== letter) {
         return nth + " letter must be " + upper;
       }
     } else if (clue === Clue.Elsewhere) {
       if (!guess.includes(letter)) {
         return "Guess must contain " + upper;
-      } else if (difficulty === Difficulty.UltraHard && guess[i] === letter) {
+      }
+    }
+    if (difficulty === Difficulty.UltraHard) {
+      if (clue !== Clue.Correct && guess[i] === letter) {
         return nth + " letter can't be " + upper;
+      }
+      const clueCount = clues.filter(
+        (c) => c.letter === letter && c.clue !== Clue.Absent
+      ).length;
+      const guessCount = guess.split(letter).length - 1;
+      const hasAbsent = clues.some(
+        (c) => c.letter === letter && c.clue === Clue.Absent
+      );
+      const amount = englishNumbers[clueCount];
+      const s = clueCount !== 1 ? "s" : "";
+      if (hasAbsent) {
+        if (guessCount !== clueCount) {
+          if (clueCount === 0) {
+            return `Guess can't contain ${upper}`;
+          } else {
+            return `Guess must contain exactly ${amount} ${upper}${s}`;
+          }
+        }
+      } else {
+        if (guessCount < clueCount) {
+          return `Guess must contain at least ${amount} ${upper}${s}`;
+        }
       }
     }
     ++i;
