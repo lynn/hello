@@ -77,11 +77,12 @@ export function violation(
     } else if (clue === Clue.Elsewhere) {
       if (!guess.includes(letter)) {
         return "Guess must contain " + upper;
-      } else if (difficulty === Difficulty.UltraHard && guess[i] === letter) {
-        return nth + " letter can't be " + upper;
       }
     }
     if (difficulty === Difficulty.UltraHard) {
+      if (clue !== Clue.Correct && guess[i] === letter) {
+        return nth + " letter can't be " + upper;
+      }
       const clueCount = clues.filter(
         (c) => c.letter === letter && c.clue !== Clue.Absent
       ).length;
