@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Row, RowState } from "./Row";
 import dictionary from "./dictionary.json";
-import { Clue, clue, describeClue, violation } from "./clue";
+import { Clue, clue, describeClue, getClueDefinitionLink, getStringDefinitionLink, violation } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
 import {
@@ -66,7 +66,7 @@ function Game(props: GameProps) {
   const [gameState, setGameState] = useState(GameState.Playing);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
-  const [hint, setHint] = useState<string>(
+  const [hint, setHint] = useState<string | JSX.Element>(
     challengeError
       ? `Invalid challenge string, playing random game.`
       : `Make your first guess!`
@@ -136,9 +136,14 @@ function Game(props: GameProps) {
       setCurrentGuess((guess) => "");
 
       const gameOver = (verbed: string) =>
-        `You ${verbed}! The answer was ${target.toUpperCase()}. (Enter to ${
-          challenge ? "play a random game" : "play again"
-        })`;
+        <>
+          You ${verbed}! The answer was&nbsp;
+          <a className="target-word">
+            {target.toUpperCase()}
+          </a>
+          . (Enter to {
+            challenge ? "play a random game" : "play again"}
+        </>;
 
       if (currentGuess === target) {
         setHint(gameOver("won"));
@@ -231,7 +236,17 @@ function Game(props: GameProps) {
           disabled={gameState !== GameState.Playing || guesses.length === 0}
           onClick={() => {
             setHint(
-              `The answer was ${target.toUpperCase()}. (Enter to play again)`
+              <>
+                The answer was&nbsp;
+                  <a 
+                    className="target-word" 
+                    href={getStringDefinitionLink(target)} 
+                    target="_blank"
+                  >
+                    {target.toUpperCase()}
+                  </a>
+                . (Enter to play again)
+              </>
             );
             setGameState(GameState.Lost);
             (document.activeElement as HTMLElement)?.blur();
@@ -250,7 +265,7 @@ function Game(props: GameProps) {
       </table>
       <p
         role="alert"
-        style={{ userSelect: /https?:/.test(hint) ? "text" : "none" }}
+        style={{ userSelect: typeof hint === "string" && /https?:/.test(hint) ? "text" : "none" }}
       >
         {hint || `\u00a0`}
       </p>
