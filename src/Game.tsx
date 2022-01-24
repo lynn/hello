@@ -99,19 +99,19 @@ function Game(props: GameProps) {
   };
 
   async function share(url: string, copiedHint: string, text?: string) {
+    const body = url + (text ? "\n\n" + text : "");
     if (
       /android|iphone|ipad|ipod|webos/i.test(navigator.userAgent) &&
       !/firefox/i.test(navigator.userAgent)
     ) {
       try {
-        await navigator.share({ url, text });
+        await navigator.share({ text: body });
         return;
       } catch (e) {
         console.warn("navigator.share failed:", e);
       }
     }
     try {
-      const body = url + (text ? "\n\n" + text : "");
       await navigator.clipboard.writeText(body);
       setHint(copiedHint);
       return;
