@@ -99,21 +99,26 @@ function Game(props: GameProps) {
   };
 
   async function share(url: string, copiedHint: string, text?: string) {
-    try {
-      await navigator.share({ url, text });
-      return;
-    } catch (e) {
-      console.warn("navigator.share failed:", e);
+    if (
+      /android|iphone|ipad|ipod|webos/i.test(navigator.userAgent) &&
+      !/firefox/i.test(navigator.userAgent)
+    ) {
       try {
-        const body = url + (text ? "\n\n" + text : "");
-        await navigator.clipboard.writeText(body);
-        setHint(copiedHint);
+        await navigator.share({ url, text });
         return;
-      } catch (e2) {
-        console.warn("navigator.clipboard.writeText failed:", e2);
-        setHint(url);
+      } catch (e) {
+        console.warn("navigator.share failed:", e);
       }
     }
+    try {
+      const body = url + (text ? "\n\n" + text : "");
+      await navigator.clipboard.writeText(body);
+      setHint(copiedHint);
+      return;
+    } catch (e) {
+      console.warn("navigator.clipboard.writeText failed:", e);
+    }
+    setHint(url);
   }
 
   const onKey = (key: string) => {
@@ -287,8 +292,7 @@ function Game(props: GameProps) {
             }}
           >
             Challenge a friend to this word
-          </button>
-          {" "}
+          </button>{" "}
           <button
             onClick={() => {
               share(
