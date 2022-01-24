@@ -98,6 +98,21 @@ function Game(props: GameProps) {
     setGameNumber((x) => x + 1);
   };
 
+  function copyToClipboard(text: string, successHint: string) {
+    if (!navigator.clipboard) {
+      setHint(text);
+    } else {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          setHint(successHint);
+        })
+        .catch(() => {
+          setHint(text);
+        });
+    }
+  }
+
   const onKey = (key: string) => {
     if (gameState !== GameState.Playing) {
       if (key === "Enter") {
@@ -250,7 +265,10 @@ function Game(props: GameProps) {
       </table>
       <p
         role="alert"
-        style={{ userSelect: /https?:/.test(hint) ? "text" : "none" }}
+        style={{
+          userSelect: /https?:/.test(hint) ? "text" : "none",
+          whiteSpace: "pre",
+        }}
       >
         {hint || `\u00a0`}
       </p>
@@ -259,22 +277,31 @@ function Game(props: GameProps) {
         <p>
           <button
             onClick={() => {
-              const url = getChallengeUrl(target);
-              if (!navigator.clipboard) {
-                setHint(url);
-              } else {
-                navigator.clipboard
-                  .writeText(url)
-                  .then(() => {
-                    setHint("Challenge link copied to clipboard!");
-                  })
-                  .catch(() => {
-                    setHint(url);
-                  });
-              }
+              copyToClipboard(
+                getChallengeUrl(target),
+                "Challenge link copied to clipboard!"
+              );
             }}
           >
             Challenge a friend to this word
+          </button>
+          <button
+            onClick={() => {
+              copyToClipboard(
+                getChallengeUrl(target) +
+                  "\n\n" +
+                  guesses
+                    .map((guess) =>
+                      clue(guess, target)
+                        .map((c) => ["⬛", "🟨", "🟩"][c.clue ?? 0])
+                        .join("")
+                    )
+                    .join("\n"),
+                "Result copied to clipboard!"
+              );
+            }}
+          >
+            Copy result as emoji
           </button>
         </p>
       )}
