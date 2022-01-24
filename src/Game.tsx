@@ -270,7 +270,7 @@ function Game(props: GameProps) {
         role="alert"
         style={{
           userSelect: /https?:/.test(hint) ? "text" : "none",
-          whiteSpace: "pre",
+          whiteSpace: "pre-wrap",
         }}
       >
         {hint || `\u00a0`}
