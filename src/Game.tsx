@@ -304,7 +304,7 @@ function Game(props: GameProps) {
               );
             }}
           >
-            Challenge with emoji results
+            Share emoji results
           </button>
         </p>
       )}
