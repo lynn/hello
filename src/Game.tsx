@@ -98,6 +98,29 @@ function Game(props: GameProps) {
     setGameNumber((x) => x + 1);
   };
 
+  async function share(url: string, copiedHint: string, text?: string) {
+    const body = url + (text ? "\n\n" + text : "");
+    if (
+      /android|iphone|ipad|ipod|webos/i.test(navigator.userAgent) &&
+      !/firefox/i.test(navigator.userAgent)
+    ) {
+      try {
+        await navigator.share({ text: body });
+        return;
+      } catch (e) {
+        console.warn("navigator.share failed:", e);
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(body);
+      setHint(copiedHint);
+      return;
+    } catch (e) {
+      console.warn("navigator.clipboard.writeText failed:", e);
+    }
+    setHint(url);
+  }
+
   const onKey = (key: string) => {
     if (gameState !== GameState.Playing) {
       if (key === "Enter") {
@@ -265,31 +288,42 @@ function Game(props: GameProps) {
       </table>
       <p
         role="alert"
-        style={{ userSelect: typeof hint === "string" && /https?:/.test(hint) ? "text" : "none" }}
+        style={{
+          userSelect: typeof hint === "string" && /https?:/.test(hint) ? "text" : "none"
+          whiteSpace: "pre-wrap",
+        }}
       >
         {hint || `\u00a0`}
       </p>
       <Keyboard letterInfo={letterInfo} onKey={onKey} />
-      {gameState !== GameState.Playing && !challenge && (
+      {gameState !== GameState.Playing && (
         <p>
           <button
             onClick={() => {
-              const url = getChallengeUrl(target);
-              if (!navigator.clipboard) {
-                setHint(url);
-              } else {
-                navigator.clipboard
-                  .writeText(url)
-                  .then(() => {
-                    setHint("Challenge link copied to clipboard!");
-                  })
-                  .catch(() => {
-                    setHint(url);
-                  });
-              }
+              share(
+                getChallengeUrl(target),
+                "Challenge link copied to clipboard!"
+              );
             }}
           >
             Challenge a friend to this word
+          </button>{" "}
+          <button
+            onClick={() => {
+              share(
+                getChallengeUrl(target),
+                "Result copied to clipboard!",
+                guesses
+                  .map((guess) =>
+                    clue(guess, target)
+                      .map((c) => ["⬛", "🟨", "🟩"][c.clue ?? 0])
+                      .join("")
+                  )
+                  .join("\n")
+              );
+            }}
+          >
+            Share emoji results
           </button>
         </p>
       )}
