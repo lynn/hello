@@ -289,7 +289,7 @@ function Game(props: GameProps) {
       <p
         role="alert"
         style={{
-          userSelect: typeof hint === "string" && /https?:/.test(hint) ? "text" : "none"
+          userSelect: typeof hint === "string" && /https?:/.test(hint) ? "text" : "none",
           whiteSpace: "pre-wrap",
         }}
       >
