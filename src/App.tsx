@@ -1,5 +1,5 @@
 import "./App.css";
-import { maxGuesses, seed } from "./util";
+import { Difficulty, maxGuesses, seed } from "./util";
 import Game from "./Game";
 import { useEffect, useState } from "react";
 import { About } from "./About";
@@ -33,7 +33,28 @@ function App() {
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches;
   const [dark, setDark] = useSetting<boolean>("dark", prefersDark);
-  const [difficulty, setDifficulty] = useSetting<number>("difficulty", 0);
+  const [difficulty, setDifficulty] = useSetting<number>("difficulty", 2);
+  const [titleFormat, setTitleFormat] = useState<string>("inherit");
+
+  useEffect(() => {
+    switch (difficulty) {
+      case 0:
+        setTitleFormat("#23eb2a");
+        break;
+      case 1:
+        setTitleFormat("#94eb97");
+        break;
+      case 2:
+        setTitleFormat("inherit");
+        break;
+      case 3:
+      case 4:
+        setTitleFormat("#e66");
+        break;
+      default:
+        setTitleFormat("inherit");
+    }
+  }, [difficulty]);
 
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
@@ -60,8 +81,9 @@ function App() {
       <h1>
         <span
           style={{
-            color: difficulty > 0 ? "#e66" : "inherit",
-            fontStyle: difficulty > 1 ? "italic" : "inherit",
+            color: titleFormat,
+            fontStyle:
+              difficulty === Difficulty.UltraHard ? "italic" : "inherit",
           }}
         >
           hell
@@ -115,14 +137,16 @@ function App() {
               id="difficulty-setting"
               type="range"
               min="0"
-              max="2"
+              max="4"
               value={difficulty}
               onChange={(e) => setDifficulty(+e.target.value)}
             />
             <div>
               <label htmlFor="difficulty-setting">Difficulty:</label>
               &nbsp;
-              <strong>{["Normal", "Hard", "Ultra Hard"][difficulty]}</strong>
+              <strong>
+                {["Baby", "Easy", "Normal", "Hard", "Ultra Hard"][difficulty]}
+              </strong>
               <div
                 style={{
                   fontSize: 14,
@@ -133,6 +157,8 @@ function App() {
               >
                 {
                   [
+                    `Guesses don't even need to be real words.`,
+                    `Guesses must be valid dictionary words. Easy mode.`,
                     `Guesses must be valid dictionary words.`,
                     `Wordle's "Hard Mode". Green letters must stay fixed, and yellow letters must be reused.`,
                     `An even stricter Hard Mode. Yellow letters must move away from where they were clued, and gray clues must be obeyed.`,

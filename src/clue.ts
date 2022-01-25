@@ -63,7 +63,7 @@ export function violation(
   clues: CluedLetter[],
   guess: string
 ): string | undefined {
-  if (difficulty === Difficulty.Normal) {
+  if (difficulty <= Difficulty.Normal) {
     return undefined;
   }
   const ultra = difficulty === Difficulty.UltraHard;

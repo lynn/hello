@@ -1,6 +1,8 @@
 import dictionary from "./dictionary.json";
 
 export enum Difficulty {
+  Baby,
+  Easy,
   Normal,
   Hard,
   UltraHard,
