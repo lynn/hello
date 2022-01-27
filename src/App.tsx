@@ -35,6 +35,11 @@ function App() {
   const [dark, setDark] = useSetting<boolean>("dark", prefersDark);
   const [colorBlind, setColorBlind] = useSetting<boolean>("colorblind", false);
   const [difficulty, setDifficulty] = useSetting<number>("difficulty", 0);
+  const [keyboard, setKeyboard] = useSetting<string>(
+    "keyboard",
+    "qwertyuiop-asdfghjkl-BzxcvbnmE"
+  );
+  const [enterLeft, setEnterLeft] = useSetting<boolean>("enter-left", false);
 
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
@@ -131,7 +136,6 @@ function App() {
             />
             <div>
               <label htmlFor="difficulty-setting">Difficulty:</label>
-              &nbsp;
               <strong>{["Normal", "Hard", "Ultra Hard"][difficulty]}</strong>
               <div
                 style={{
@@ -151,6 +155,29 @@ function App() {
               </div>
             </div>
           </div>
+          <div className="Settings-setting">
+            <label htmlFor="keyboard-setting">Keyboard layout:</label>
+            <select
+              name="keyboard-setting"
+              id="keyboard-setting"
+              value={keyboard}
+              onChange={(e) => setKeyboard(e.target.value)}
+            >
+              <option value="qwertyuiop-asdfghjkl-BzxcvbnmE">QWERTY</option>
+              <option value="azertyuiop-qsdfghjklm-BzxcvbnE">AZERTY</option>
+              <option value="qwertzuiop-asdfghjkl-ByxcvbnmE">QWERTZ</option>
+              <option value="BpyfgcrlE-aoeuidhtns-qjkxbmwvz">Dvorak</option>
+              <option value="qwfpgjluy-arstdhneio-BzxcvbkmE">Colemak</option>
+            </select>
+            <input
+              style={{ marginLeft: 20 }}
+              id="enter-left-setting"
+              type="checkbox"
+              checked={enterLeft}
+              onChange={() => setEnterLeft((x: boolean) => !x)}
+            />
+            <label htmlFor="enter-left-setting">"Enter" on left side</label>
+          </div>
         </div>
       )}
       <Game
@@ -158,6 +185,10 @@ function App() {
         hidden={page !== "game"}
         difficulty={difficulty}
         colorBlind={colorBlind}
+        keyboardLayout={keyboard.replaceAll(
+          /[BE]/g,
+          (x) => (enterLeft ? "EB" : "BE")["BE".indexOf(x)]
+        )}
       />
     </div>
   );

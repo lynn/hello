@@ -237,6 +237,7 @@ a:active {
 
 .Settings-setting label {
   margin-inline-start: 8px;
+  margin-inline-end: 8px;
 }
 
 .top-right {

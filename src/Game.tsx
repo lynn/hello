@@ -26,6 +26,7 @@ interface GameProps {
   hidden: boolean;
   difficulty: Difficulty;
   colorBlind: boolean;
+  keyboardLayout: string;
 }
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
@@ -281,7 +282,11 @@ function Game(props: GameProps) {
       >
         {hint || `\u00a0`}
       </p>
-      <Keyboard letterInfo={letterInfo} onKey={onKey} />
+      <Keyboard
+        layout={props.keyboardLayout}
+        letterInfo={letterInfo}
+        onKey={onKey}
+      />
       {gameState !== GameState.Playing && (
         <p>
           <button
