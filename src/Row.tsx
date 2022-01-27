@@ -11,7 +11,6 @@ interface RowProps {
   wordLength: number;
   cluedLetters: CluedLetter[];
   annotation?: string;
-  color: boolean;
 }
 
 export function Row(props: RowProps) {
@@ -21,7 +20,7 @@ export function Row(props: RowProps) {
     .concat(Array(props.wordLength).fill({ clue: Clue.Absent, letter: "" }))
     .slice(0, props.wordLength)
     .map(({ clue, letter }, i) => {
-      let letterClass = props.color ? "Row-letter-color" : "Row-letter";
+      let letterClass = "Row-letter";
       if (isLockedIn && clue !== undefined) {
         letterClass += " " + clueClass(clue);
       }

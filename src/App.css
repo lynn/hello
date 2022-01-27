@@ -121,32 +121,15 @@ table.Game-rows > tbody {
   outline: none;
 }
 
-.Row-letter-color.letter-correct {
-  border: 2px solid rgba(0, 0, 0, 0.3);
-  background-color: #f5793a;
-  color: white !important;
-}
-
 .letter-correct {
   border: 2px solid rgba(0, 0, 0, 0.3);
   background-color: rgb(87, 172, 120);
   color: white !important;
 }
 
-.Row-letter-color.letter-elsewhere {
-  border: 2px dotted rgba(0, 0, 0, 0.3);
-  background-color: #85c0f9;
-  color: white !important;
-}
 .letter-elsewhere {
   border: 2px dotted rgba(0, 0, 0, 0.3);
   background-color: #e9c601;
-  color: white !important;
-}
-
-.Row-letter-color.letter-absent {
-  border: 2px solid transparent;
-  background-color: rgb(162, 162, 162);
   color: white !important;
 }
 
@@ -210,15 +193,9 @@ a:active {
 .App-about b.green-bg {
   background-color: rgb(87, 172, 120);
 }
-.App-about b.orange-bg {
-  background-color: #f5793a;
-}
 
 .App-about b.yellow-bg {
   background-color: #e9c601;
-}
-.App-about b.blue-bg {
-  background-color: #85c0f9;
 }
 
 .Game-seed-info {
@@ -275,4 +252,14 @@ a:active {
 
 .top-right a + a {
   margin-inline-start: 8px;
+}
+
+.App-container.color-blind .letter-correct,
+.App-container.color-blind .App-about b.green-bg {
+  background-color: #f5793a;
+}
+
+.App-container.color-blind .letter-elsewhere,
+.App-container.color-blind .App-about b.yellow-bg {
+  background-color: #85c0f9;
 }

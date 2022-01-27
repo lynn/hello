@@ -25,7 +25,7 @@ interface GameProps {
   maxGuesses: number;
   hidden: boolean;
   difficulty: Difficulty;
-  color: boolean;
+  colorBlind: boolean;
 }
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
@@ -220,7 +220,6 @@ function Game(props: GameProps) {
               : RowState.Pending
           }
           cluedLetters={cluedLetters}
-          color={props.color}
         />
       );
     });
@@ -297,13 +296,16 @@ function Game(props: GameProps) {
           </button>{" "}
           <button
             onClick={() => {
+              const emoji = props.colorBlind
+                ? ["⬛", "🟦", "🟧"]
+                : ["⬛", "🟨", "🟩"];
               share(
                 getChallengeUrl(target),
                 "Result copied to clipboard!",
                 guesses
                   .map((guess) =>
                     clue(guess, target)
-                      .map((c) => ["⬛", "🟨", "🟩"][c.clue ?? 0])
+                      .map((c) => emoji[c.clue ?? 0])
                       .join("")
                   )
                   .join("\n")
