@@ -2,7 +2,11 @@ import { Clue } from "./clue";
 import { Row, RowState } from "./Row";
 import { maxGuesses } from "./util";
 
-export function About() {
+interface aboutProps {
+  color: boolean;
+}
+
+export function About(props: aboutProps) {
   return (
     <div className="App-about">
       <p>
@@ -28,19 +32,21 @@ export function About() {
           { clue: Clue.Correct, letter: "r" },
           { clue: Clue.Elsewhere, letter: "d" },
         ]}
+        color={props.color}
       />
       <p>
         <b>W</b> and <b>O</b> aren't in the target word at all.
       </p>
       <p>
-        <b className="green-bg">R</b> is correct! The third letter is{" "}
-        <b className="green-bg">R</b>
+        <b className={props.color ? "orange-bg" : "green-bg"}>R</b> is correct!
+        The third letter is{" "}
+        <b className={props.color ? "orange-bg" : "green-bg"}>R</b>
         .<br />
         <strong>(There may still be a second R in the word.)</strong>
       </p>
       <p>
-        <b className="yellow-bg">D</b> occurs <em>elsewhere</em> in the target
-        word.
+        <b className={props.color ? "blue-bg" : "yellow-bg"}>D</b> occurs{" "}
+        <em>elsewhere</em> in the target word.
         <br />
         <strong>(Perhaps more than once. 🤔)</strong>
       </p>
@@ -58,6 +64,7 @@ export function About() {
           { clue: Clue.Absent, letter: "k" },
         ]}
         annotation={"So close!"}
+        color={props.color}
       />
       <Row
         rowState={RowState.LockedIn}
@@ -69,6 +76,7 @@ export function About() {
           { clue: Clue.Correct, letter: "t" },
         ]}
         annotation={"Got it!"}
+        color={props.color}
       />
       <p>
         Report issues{" "}
@@ -78,7 +86,8 @@ export function About() {
       <p>
         This game will be free and ad-free forever,
         <br />
-        but you can <a href="https://ko-fi.com/chordbug">buy me a coffee</a> if you'd like.
+        but you can <a href="https://ko-fi.com/chordbug">buy me a coffee</a> if
+        you'd like.
       </p>
     </div>
   );
