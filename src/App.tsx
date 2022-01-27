@@ -33,6 +33,7 @@ function App() {
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches;
   const [dark, setDark] = useSetting<boolean>("dark", prefersDark);
+  const [color, setColor] = useSetting<boolean>("color", false);
   const [difficulty, setDifficulty] = useSetting<number>("difficulty", 0);
 
   useEffect(() => {
@@ -98,7 +99,7 @@ function App() {
           {seed ? "Random" : "Today's"}
         </a>
       </div>
-      {page === "about" && <About />}
+      {page === "about" && <About color={color} />}
       {page === "settings" && (
         <div className="Settings">
           <div className="Settings-setting">
@@ -109,6 +110,18 @@ function App() {
               onChange={() => setDark((x: boolean) => !x)}
             />
             <label htmlFor="dark-setting">Dark theme</label>
+          </div>
+          <div className="Settings-setting">
+            <input
+              id="color-setting"
+              type="checkbox"
+              checked={color}
+              onChange={() => {
+                console.log("set color to ", !color);
+                setColor((x: boolean) => !x);
+              }}
+            />
+            <label htmlFor="color-setting">Color Blind Mode</label>
           </div>
           <div className="Settings-setting">
             <input
@@ -147,6 +160,7 @@ function App() {
         maxGuesses={maxGuesses}
         hidden={page !== "game"}
         difficulty={difficulty}
+        color={color}
       />
     </div>
   );

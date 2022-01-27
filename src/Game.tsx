@@ -25,6 +25,7 @@ interface GameProps {
   maxGuesses: number;
   hidden: boolean;
   difficulty: Difficulty;
+  color: boolean;
 }
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
@@ -219,6 +220,7 @@ function Game(props: GameProps) {
               : RowState.Pending
           }
           cluedLetters={cluedLetters}
+          color={props.color}
         />
       );
     });
