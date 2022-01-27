@@ -32,6 +32,10 @@ To generate target words, I have been manually curating the top 25,000 or so ent
 
 To check guesses, I use some variation of the _Official Tournament and Club Word List_ used in North American Scrabble tournaments. (I'm not a native English speaker, but my English tends mostly American.)
 
-## How to run locally
+## For developers
 
-To run this library locally you will need to have [Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm#using-a-node-version-manager-to-install-nodejs-and-npm) installed. You should should [fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) [this](https://github.com/lynn/hello-wordl) github repository. Make any changes using your favorite IDE such as [VSCode](https://code.visualstudio.com/download). Using a terminal navigate to the repository and run the `npm install` command and than `npm start`. When you save your code changes they should be reflected in the running process. Have fun!
+You're very welcome to create your own Wordle offshoot/remix based on _hello wordl_. To get started, you can [fork the code](https://docs.github.com/en/get-started/quickstart/fork-a-repo) on GitHub.
+
+To run the code locally, first install [Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm#using-a-node-version-manager-to-install-nodejs-and-npm). Then, in this directory, open a terminal and run `npm install` followed by `npm run start`. _hello wordl_ will be running at http://localhost:3000/. Any changes you make to the source code will be reflected there. Have fun!
+
+Finally, `npm run deploy` will deploy your code to the `gh-pages` branch of your fork, so that everyone can play your version at https://yourname.github.io/hello-wordl (or the name of your fork if you renamed it). 
