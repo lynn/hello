@@ -29,12 +29,14 @@ interface GameProps {
   keyboardLayout: string;
 }
 
+const easyTargets = targetList.slice(0, targetList.indexOf("revel") + 1); // Slightly more frequent word on the list
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
 const minWordLength = 4;
 const maxWordLength = 11;
 
-function randomTarget(wordLength: number): string {
-  const eligible = targets.filter((word) => word.length === wordLength);
+function randomTarget(wordLength: number, difficulty: number): string {
+  const target = difficulty < Difficulty.Normal ? easyTargets : targets;
+  const eligible = target.filter((word) => word.length === wordLength);
   let candidate: string;
   do {
     candidate = pick(eligible);
@@ -79,7 +81,7 @@ function Game(props: GameProps) {
   );
   const [target, setTarget] = useState(() => {
     resetRng();
-    return challenge || randomTarget(wordLength);
+    return challenge || randomTarget(wordLength, props.difficulty);
   });
   const [gameNumber, setGameNumber] = useState(1);
   const tableRef = useRef<HTMLTableElement>(null);
@@ -92,7 +94,7 @@ function Game(props: GameProps) {
     const newWordLength =
       wordLength < minWordLength || wordLength > maxWordLength ? 5 : wordLength;
     setWordLength(newWordLength);
-    setTarget(randomTarget(newWordLength));
+    setTarget(randomTarget(newWordLength, props.difficulty));
     setGuesses([]);
     setCurrentGuess("");
     setHint("");
@@ -145,7 +147,9 @@ function Game(props: GameProps) {
         setHint("Too short");
         return;
       }
-      if (!dictionary.includes(currentGuess)) {
+
+      // Baby will short circuit to false
+      if (props.difficulty && !dictionary.includes(currentGuess)) {
         setHint("Not a valid word");
         return;
       }
@@ -246,7 +250,7 @@ function Game(props: GameProps) {
             setGameState(GameState.Playing);
             setGuesses([]);
             setCurrentGuess("");
-            setTarget(randomTarget(length));
+            setTarget(randomTarget(length, props.difficulty));
             setWordLength(length);
             setHint(`${length} letters`);
           }}
