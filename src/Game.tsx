@@ -25,6 +25,8 @@ interface GameProps {
   maxGuesses: number;
   hidden: boolean;
   difficulty: Difficulty;
+  colorBlind: boolean;
+  keyboardLayout: string;
 }
 
 const easyTargets = targetList.slice(0, targetList.indexOf("revel") + 1); // Slightly more frequent word on the list
@@ -284,7 +286,11 @@ function Game(props: GameProps) {
       >
         {hint || `\u00a0`}
       </p>
-      <Keyboard letterInfo={letterInfo} onKey={onKey} />
+      <Keyboard
+        layout={props.keyboardLayout}
+        letterInfo={letterInfo}
+        onKey={onKey}
+      />
       {gameState !== GameState.Playing && (
         <p>
           <button
@@ -299,13 +305,16 @@ function Game(props: GameProps) {
           </button>{" "}
           <button
             onClick={() => {
+              const emoji = props.colorBlind
+                ? ["⬛", "🟦", "🟧"]
+                : ["⬛", "🟨", "🟩"];
               share(
                 getChallengeUrl(target),
                 "Result copied to clipboard!",
                 guesses
                   .map((guess) =>
                     clue(guess, target)
-                      .map((c) => ["⬛", "🟨", "🟩"][c.clue ?? 0])
+                      .map((c) => emoji[c.clue ?? 0])
                       .join("")
                   )
                   .join("\n")

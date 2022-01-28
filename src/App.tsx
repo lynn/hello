@@ -35,6 +35,12 @@ function App() {
   const [dark, setDark] = useSetting<boolean>("dark", prefersDark);
   const [difficulty, setDifficulty] = useSetting<number>("difficulty", 2);
   const [titleFormat, setTitleFormat] = useState<string>("inherit");
+  const [colorBlind, setColorBlind] = useSetting<boolean>("colorblind", false);
+  const [keyboard, setKeyboard] = useSetting<string>(
+    "keyboard",
+    "qwertyuiop-asdfghjkl-BzxcvbnmE"
+  );
+  const [enterLeft, setEnterLeft] = useSetting<boolean>("enter-left", false);
 
   useEffect(() => {
     switch (difficulty) {
@@ -77,7 +83,7 @@ function App() {
   );
 
   return (
-    <div className="App-container">
+    <div className={"App-container" + (colorBlind ? " color-blind" : "")}>
       <h1>
         <span
           style={{
@@ -134,6 +140,15 @@ function App() {
           </div>
           <div className="Settings-setting">
             <input
+              id="colorblind-setting"
+              type="checkbox"
+              checked={colorBlind}
+              onChange={() => setColorBlind((x: boolean) => !x)}
+            />
+            <label htmlFor="colorblind-setting">Color blind mode</label>
+          </div>
+          <div className="Settings-setting">
+            <input
               id="difficulty-setting"
               type="range"
               min="0"
@@ -147,6 +162,7 @@ function App() {
               <strong>
                 {["Baby", "Easy", "Normal", "Hard", "Ultra Hard"][difficulty]}
               </strong>
+              <strong>{["Normal", "Hard", "Ultra Hard"][difficulty]}</strong>
               <div
                 style={{
                   fontSize: 14,
@@ -167,12 +183,40 @@ function App() {
               </div>
             </div>
           </div>
+          <div className="Settings-setting">
+            <label htmlFor="keyboard-setting">Keyboard layout:</label>
+            <select
+              name="keyboard-setting"
+              id="keyboard-setting"
+              value={keyboard}
+              onChange={(e) => setKeyboard(e.target.value)}
+            >
+              <option value="qwertyuiop-asdfghjkl-BzxcvbnmE">QWERTY</option>
+              <option value="azertyuiop-qsdfghjklm-BzxcvbnE">AZERTY</option>
+              <option value="qwertzuiop-asdfghjkl-ByxcvbnmE">QWERTZ</option>
+              <option value="BpyfgcrlE-aoeuidhtns-qjkxbmwvz">Dvorak</option>
+              <option value="qwfpgjluy-arstdhneio-BzxcvbkmE">Colemak</option>
+            </select>
+            <input
+              style={{ marginLeft: 20 }}
+              id="enter-left-setting"
+              type="checkbox"
+              checked={enterLeft}
+              onChange={() => setEnterLeft((x: boolean) => !x)}
+            />
+            <label htmlFor="enter-left-setting">"Enter" on left side</label>
+          </div>
         </div>
       )}
       <Game
         maxGuesses={maxGuesses}
         hidden={page !== "game"}
         difficulty={difficulty}
+        colorBlind={colorBlind}
+        keyboardLayout={keyboard.replaceAll(
+          /[BE]/g,
+          (x) => (enterLeft ? "EB" : "BE")["BE".indexOf(x)]
+        )}
       />
     </div>
   );

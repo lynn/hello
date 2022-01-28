@@ -1,16 +1,19 @@
 import { Clue, clueClass } from "./clue";
 
 interface KeyboardProps {
+  layout: string;
   letterInfo: Map<string, Clue>;
   onKey: (key: string) => void;
 }
 
 export function Keyboard(props: KeyboardProps) {
-  const keyboard = [
-    "q w e r t y u i o p".split(" "),
-    "a s d f g h j k l".split(" "),
-    "Backspace z x c v b n m Enter".split(" "),
-  ];
+  const keyboard = props.layout
+    .split("-")
+    .map((row) =>
+      row
+        .split("")
+        .map((key) => key.replace("B", "Backspace").replace("E", "Enter"))
+    );
 
   return (
     <div className="Game-keyboard" aria-hidden="true">

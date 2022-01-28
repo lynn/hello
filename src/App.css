@@ -26,6 +26,19 @@ body {
   text-transform: uppercase;
   font-weight: bold;
 }
+.Row-letter-color {
+  margin: 2px;
+  border: 2px solid rgba(128, 128, 128, 0.8);
+  flex: 1;
+  max-width: 40px;
+  height: 40px;
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  font-weight: bold;
+}
 
 .Row-annotation {
   margin-inline-start: 16px;
@@ -217,13 +230,14 @@ a:active {
   height: 18px;
 }
 
-.Settings-setting input[type=range] {
+.Settings-setting input[type="range"] {
   width: 50px;
   height: 18px;
 }
 
 .Settings-setting label {
   margin-inline-start: 8px;
+  margin-inline-end: 8px;
 }
 
 .top-right {
@@ -239,4 +253,14 @@ a:active {
 
 .top-right a + a {
   margin-inline-start: 8px;
+}
+
+.App-container.color-blind .letter-correct,
+.App-container.color-blind .App-about b.green-bg {
+  background-color: #f5793a;
+}
+
+.App-container.color-blind .letter-elsewhere,
+.App-container.color-blind .App-about b.yellow-bg {
+  background-color: #85c0f9;
 }
