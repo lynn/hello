@@ -105,3 +105,11 @@ export function violation(
   }
   return undefined;
 }
+
+export function getClueDefinitionLink(clues: CluedLetter[]): string {
+  return getStringDefinitionLink(clues.map(clue => clue.letter).join(''));
+}
+
+export function getStringDefinitionLink(word: string): string {
+  return `https://www.collinsdictionary.com/dictionary/english/${word}`;
+}

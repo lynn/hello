@@ -25,6 +25,13 @@ body {
   align-items: center;
   text-transform: uppercase;
   font-weight: bold;
+  position: relative;
+}
+
+.Row-letter:before {
+    content: '';
+    position: absolute;
+    inset: -4px -4px -4px -4px;
 }
 .Row-letter-color {
   margin: 2px;
@@ -44,6 +51,42 @@ body {
   margin-inline-start: 16px;
   width: 5em;
   text-align: start;
+}
+
+.Row-definition { 
+  position: absolute;
+  padding-left: 12px;
+  height: 40px;
+  margin-left: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Icon-container img {
+  height: 18px;
+  width: 18px;
+  filter: invert(61%) sepia(85%) saturate(3%) hue-rotate(318deg) brightness(93%) contrast(82%);
+}
+
+.Icon-container img:hover {
+  filter: invert(50%) sepia(0%) saturate(15%) hue-rotate(137deg) brightness(98%) contrast(89%);
+}
+
+.target-word {
+  color: unset !important;
+  display: inline;
+  text-decoration: none;
+}
+
+.target-word:hover {
+  text-decoration: underline;
 }
 
 .App-container {
