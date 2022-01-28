@@ -3,6 +3,7 @@ import { Row, RowState } from "./Row";
 import dictionary from "./dictionary.json";
 import { Clue, clue, describeClue, violation } from "./clue";
 import { Keyboard } from "./Keyboard";
+import { RandomGuess } from "./RandomGuess";
 import targetList from "./targets.json";
 import {
   dictionarySet,
@@ -287,6 +288,7 @@ function Game(props: GameProps) {
         letterInfo={letterInfo}
         onKey={onKey}
       />
+      <RandomGuess onKey={onKey} wordLength={wordLength} />
       {gameState !== GameState.Playing && (
         <p>
           <button
