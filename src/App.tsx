@@ -164,7 +164,7 @@ function App() {
               onChange={(e) => setKeyboard(e.target.value)}
             >
               <option value="qwertyuiop-asdfghjkl-BzxcvbnmE">QWERTY</option>
-              <option value="azertyuiop-qsdfghjklm-BzxcvbnE">AZERTY</option>
+              <option value="azertyuiop-qsdfghjklm-BwxcvbnE">AZERTY</option>
               <option value="qwertzuiop-asdfghjkl-ByxcvbnmE">QWERTZ</option>
               <option value="BpyfgcrlE-aoeuidhtns-qjkxbmwvz">Dvorak</option>
               <option value="qwfpgjluy-arstdhneio-BzxcvbkmE">Colemak</option>
