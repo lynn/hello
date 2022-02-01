@@ -142,6 +142,7 @@ table.Game-rows > tbody {
 body.dark {
   background-color: #404040;
   color: #e0e0e0;
+  color-scheme: dark;
 }
 
 body.dark .Game-keyboard-button {
@@ -247,11 +248,15 @@ a:active {
 }
 
 .emoji-link {
-  font-size: 150%;
+  font-size: 24px;
   text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
-.top-right a + a {
+.top-right > * + * {
   margin-inline-start: 8px;
 }
 
