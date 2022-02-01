@@ -62,3 +62,28 @@ export function ordinal(n: number): string {
 
 export const englishNumbers =
   "zero one two three four five six seven eight nine ten eleven".split(" ");
+
+export function describeSeed(seed: number): string {
+  const year = Math.floor(seed / 10000);
+  const month = Math.floor(seed / 100) % 100;
+  const day = seed % 100;
+  const isLeap = year % (year % 25 ? 4 : 16) === 0;
+  const feb = isLeap ? 29 : 28;
+  const days = [0, 31, feb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  if (
+    year >= 2000 &&
+    year <= 2100 &&
+    month >= 1 &&
+    month <= 12 &&
+    day >= 1 &&
+    day <= days[month]
+  ) {
+    return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  } else {
+    return "seed " + seed;
+  }
+}
