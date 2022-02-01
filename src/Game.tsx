@@ -288,7 +288,7 @@ function Game(props: GameProps) {
         letterInfo={letterInfo}
         onKey={onKey}
       />
-      <RandomGuess onKey={onKey} wordLength={wordLength} />
+      <RandomGuess randomTarget={randomTarget} onKey={onKey} wordLength={wordLength} />
       {gameState !== GameState.Playing && (
         <p>
           <button
