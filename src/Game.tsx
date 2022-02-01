@@ -128,8 +128,14 @@ function Game(props: GameProps) {
     setGameNumber((x) => x + 1);
   };
 
-  async function share(copiedHint: string, text?: string) {
-    const url = seed
+  async function share(
+    copiedHint: string,
+    text?: string,
+    customTarget?: string
+  ) {
+    const url = customTarget
+      ? getChallengeUrl(customTarget)
+      : seed
       ? window.location.origin + window.location.pathname + currentSeedParams()
       : getChallengeUrl(target);
     const body = url + (text ? "\n\n" + text : "");
@@ -354,6 +360,29 @@ function Game(props: GameProps) {
             Share emoji results
           </button>
         )}
+      </p>
+      <p>
+        <button
+          onClick={() => {
+            if (currentGuess.length >= minLength) {
+              if (dictionary.includes(currentGuess)) {
+                share(
+                  `Link for word "${currentGuess.toUpperCase()}" copied to clipboard!`,
+                  "I created this challenge for you!",
+                  currentGuess
+                );
+              } else {
+                setHint("Not a valid word");
+              }
+            } else if (currentGuess.length > 0) {
+              setHint("Too short");
+            } else {
+              setHint("Please make a guess first");
+            }
+          }}
+        >
+          Create a custom game from current guess
+        </button>
       </p>
     </div>
   );
