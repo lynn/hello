@@ -45,7 +45,7 @@ function App() {
 
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
-    const noParamsProvided = window.location.pathname === "/";
+    const noParamsProvided = window.location.pathname === "/" || window.location.pathname === "/cja/";
     const seedProvided = urlParam("seed") !== null;
     if (!seedProvided && (urlParam("today") !== null || urlParam("todays") !== null || noParamsProvided)) {
       document.location = "?seed=" + todaySeed;
