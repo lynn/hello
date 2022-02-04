@@ -45,7 +45,9 @@ function App() {
 
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
-    if (urlParam("today") !== null || urlParam("todas") !== null) {
+    const noParamsProvided = window.location.pathname === "/";
+    const seedProvided = urlParam("seed") !== null;
+    if (!seedProvided && (urlParam("today") !== null || urlParam("todays") !== null || noParamsProvided)) {
       document.location = "?seed=" + todaySeed;
     }
     setTimeout(() => {
@@ -74,21 +76,23 @@ function App() {
             fontStyle: difficulty > 1 ? "italic" : "inherit",
           }}
         >
-          hell
+          c
         </span>
-        o wordl
+        ja
       </h1>
-      <div className="top-right">
-        {page !== "game" ? (
-          link("❌", "Close", "game")
-        ) : (
-          <>
-            {link("❓", "About", "about")}
-            {link("⚙️", "Settings", "settings")}
-          </>
-        )}
-      </div>
-      <div
+      {/*<div className="top-right">*/}
+      {/*  {page !== "game" ? (*/}
+      {/*    link("❌", "Close", "game")*/}
+      {/*  ) : (*/}
+      {/*    <>*/}
+      {/*      {link("❓", "About", "about")}*/}
+      {/*      {link("⚙️", "Settings", "settings")}*/}
+      {/*    </>*/}
+      {/*  )}*/}
+      {/*</div>*/}
+
+        {/*<p>Zgadnij wyraz kończący się na "cja"</p>*/}
+        <div
         style={{
           position: "absolute",
           left: 5,
@@ -96,9 +100,6 @@ function App() {
           visibility: page === "game" ? "visible" : "hidden",
         }}
       >
-        <a href={seed ? "?random" : "?seed=" + todaySeed}>
-          {seed ? "Random" : "Today's"}
-        </a>
       </div>
       {page === "about" && <About />}
       {page === "settings" && (
@@ -186,6 +187,9 @@ function App() {
           (x) => (enterLeft ? "EB" : "BE")["BE".indexOf(x)]
         )}
       />
+      {/*<a href={seed ? "?random" : "?seed=" + todaySeed}>*/}
+      {/*  {seed ? "Włącz tryb \"Losowe hasło\"" : "Włącz tryb \"Dzisiejsze hasło\""}*/}
+      {/*</a>*/}
     </div>
   );
 }

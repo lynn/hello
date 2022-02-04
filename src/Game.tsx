@@ -30,8 +30,8 @@ interface GameProps {
   keyboardLayout: string;
 }
 
-const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
-const minLength = 4;
+const targets = targetList.slice(0, targetList.indexOf("wirylizacja") + 1); // Words no rarer than this one
+const minLength = 5;
 const maxLength = 11;
 
 function randomTarget(wordLength: number): string {
@@ -65,11 +65,29 @@ if (initChallenge && !dictionarySet.has(initChallenge)) {
   challengeError = true;
 }
 
-function parseUrlLength(): number {
-  const lengthParam = urlParam("length");
-  if (!lengthParam) return 5;
-  const length = Number(lengthParam);
-  return length >= minLength && length <= maxLength ? length : 5;
+// function parseUrlLength(): number {
+//   const lengthParam = urlParam("length");
+//   if (!lengthParam) return 5;
+//   const length = Number(lengthParam);
+//   return length >= minLength && length <= maxLength ? length : 5;
+// }
+
+function getWordLength() {
+  const param = urlParam("seed");
+  if (!param) return randomIntFromInterval(minLength, maxLength);
+  
+  // get wordLength based on today's date
+  const today = new Date();
+  const dayOfTheMonth = today.getDate();
+  let wordLength = dayOfTheMonth % (maxLength + 1);
+  if (wordLength < minLength)
+    wordLength = minLength;
+  
+  return wordLength;
+}
+
+function randomIntFromInterval(min: number, max: number) { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
 function parseUrlGameNumber(): number {
@@ -85,9 +103,10 @@ function Game(props: GameProps) {
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [challenge, setChallenge] = useState<string>(initChallenge);
   const [wordLength, setWordLength] = useState(
-    challenge ? challenge.length : parseUrlLength()
+    challenge ? challenge.length : getWordLength()
   );
-  const [gameNumber, setGameNumber] = useState(parseUrlGameNumber());
+  // const [gameNumber, setGameNumber] = useState(parseUrlGameNumber());
+  const [gameNumber, setGameNumber] = useState(1);
   const [target, setTarget] = useState(() => {
     resetRng();
     // Skip RNG ahead to the parsed initial game number:
@@ -96,11 +115,11 @@ function Game(props: GameProps) {
   });
   const [hint, setHint] = useState<string>(
     challengeError
-      ? `Invalid challenge string, playing random game.`
-      : `Make your first guess!`
+      ? `losowa gra.`
+      : `Wymyśl pierwsze słowo, które kończy się na "cja".`
   );
   const currentSeedParams = () =>
-    `?seed=${seed}&length=${wordLength}&game=${gameNumber}`;
+    `?seed=${seed}&game=${gameNumber}`;
   useEffect(() => {
     if (seed) {
       window.history.replaceState(
@@ -125,7 +144,8 @@ function Game(props: GameProps) {
     setGuesses([]);
     setCurrentGuess("");
     setGameState(GameState.Playing);
-    setGameNumber((x) => x + 1);
+    // setGameNumber((x) => x + 1);
+    setGameNumber(1);
   };
 
   async function share(copiedHint: string, text?: string) {
@@ -173,11 +193,11 @@ function Game(props: GameProps) {
       setHint("");
     } else if (key === "Enter") {
       if (currentGuess.length !== wordLength) {
-        setHint("Too short");
+        setHint("Wyraz za krótki");
         return;
       }
       if (!dictionary.includes(currentGuess)) {
-        setHint("Not a valid word");
+        setHint("Nie ma takiego wyrazu, nygusie.");
         return;
       }
       for (const g of guesses) {
@@ -192,15 +212,13 @@ function Game(props: GameProps) {
       setCurrentGuess((guess) => "");
 
       const gameOver = (verbed: string) =>
-        `You ${verbed}! The answer was ${target.toUpperCase()}. (Enter to ${
-          challenge ? "play a random game" : "play again"
-        })`;
+        `You ${verbed}! Poprawna odpowiedź to ${target.toUpperCase()}.`;
 
       if (currentGuess === target) {
-        setHint(gameOver("won"));
+        setHint(gameOver("wygrałeś"));
         setGameState(GameState.Won);
       } else if (guesses.length + 1 === props.maxGuesses) {
-        setHint(gameOver("lost"));
+        setHint(gameOver("przegrałeś"));
         setGameState(GameState.Lost);
       } else {
         setHint("");
@@ -259,42 +277,42 @@ function Game(props: GameProps) {
   return (
     <div className="Game" style={{ display: props.hidden ? "none" : "block" }}>
       <div className="Game-options">
-        <label htmlFor="wordLength">Letters:</label>
-        <input
-          type="range"
-          min={minLength}
-          max={maxLength}
-          id="wordLength"
-          disabled={
-            gameState === GameState.Playing &&
-            (guesses.length > 0 || currentGuess !== "" || challenge !== "")
-          }
-          value={wordLength}
-          onChange={(e) => {
-            const length = Number(e.target.value);
-            resetRng();
-            setGameNumber(1);
-            setGameState(GameState.Playing);
-            setGuesses([]);
-            setCurrentGuess("");
-            setTarget(randomTarget(length));
-            setWordLength(length);
-            setHint(`${length} letters`);
-          }}
-        ></input>
-        <button
-          style={{ flex: "0 0 auto" }}
-          disabled={gameState !== GameState.Playing || guesses.length === 0}
-          onClick={() => {
-            setHint(
-              `The answer was ${target.toUpperCase()}. (Enter to play again)`
-            );
-            setGameState(GameState.Lost);
-            (document.activeElement as HTMLElement)?.blur();
-          }}
-        >
-          Give up
-        </button>
+        {/*<label htmlFor="wordLength">Liczba liter:</label>*/}
+        {/*<input*/}
+        {/*  type="range"*/}
+        {/*  min={minLength}*/}
+        {/*  max={maxLength}*/}
+        {/*  id="wordLength"*/}
+        {/*  disabled={*/}
+        {/*    gameState === GameState.Playing &&*/}
+        {/*    (guesses.length > 0 || currentGuess !== "" || challenge !== "")*/}
+        {/*  }*/}
+        {/*  value={wordLength}*/}
+        {/*  onChange={(e) => {*/}
+        {/*    const length = Number(e.target.value);*/}
+        {/*    resetRng();*/}
+        {/*    setGameNumber(1);*/}
+        {/*    setGameState(GameState.Playing);*/}
+        {/*    setGuesses([]);*/}
+        {/*    setCurrentGuess("");*/}
+        {/*    setTarget(randomTarget(length));*/}
+        {/*    setWordLength(length);*/}
+        {/*    setHint(`${length} liter`);*/}
+        {/*  }}*/}
+        {/*></input>*/}
+        {/*<button*/}
+        {/*  style={{ flex: "0 0 auto" }}*/}
+        {/*  disabled={gameState !== GameState.Playing || guesses.length === 0}*/}
+        {/*  onClick={() => {*/}
+        {/*    setHint(*/}
+        {/*      `Poprawna odpowiedź to ${target.toUpperCase()}. (Wciśnij Enter żeby zagrać jeszcze raz)`*/}
+        {/*    );*/}
+        {/*    setGameState(GameState.Lost);*/}
+        {/*    (document.activeElement as HTMLElement)?.blur();*/}
+        {/*  }}*/}
+        {/*>*/}
+        {/*  Poddaj się*/}
+        {/*</button>*/}
       </div>
       <table
         className="Game-rows"
@@ -318,42 +336,42 @@ function Game(props: GameProps) {
         letterInfo={letterInfo}
         onKey={onKey}
       />
-      <div className="Game-seed-info">
-        {challenge
-          ? "playing a challenge game"
-          : seed
-          ? `${describeSeed(seed)} — length ${wordLength}, game ${gameNumber}`
-          : "playing a random game"}
-      </div>
+      {/*<div className="Game-seed-info">*/}
+      {/*  {challenge*/}
+      {/*    ? "playing a challenge game"*/}
+      {/*    : seed*/}
+      {/*    ? `${describeSeed(seed)} — length ${wordLength}, game ${gameNumber}`*/}
+      {/*    : "losowa gra"}*/}
+      {/*</div>*/}
       <p>
-        <button
-          onClick={() => {
-            share("Link copied to clipboard!");
-          }}
-        >
-          Share a link to this game
-        </button>{" "}
-        {gameState !== GameState.Playing && (
-          <button
-            onClick={() => {
-              const emoji = props.colorBlind
-                ? ["⬛", "🟦", "🟧"]
-                : ["⬛", "🟨", "🟩"];
-              share(
-                "Result copied to clipboard!",
-                guesses
-                  .map((guess) =>
-                    clue(guess, target)
-                      .map((c) => emoji[c.clue ?? 0])
-                      .join("")
-                  )
-                  .join("\n")
-              );
-            }}
-          >
-            Share emoji results
-          </button>
-        )}
+        {/*<button*/}
+        {/*  onClick={() => {*/}
+        {/*    share("Link copied to clipboard!");*/}
+        {/*  }}*/}
+        {/*>*/}
+        {/*  Wyślij link znajomemu*/}
+        {/*</button>{" "}*/}
+        {/*{gameState !== GameState.Playing && (*/}
+        {/*  <button*/}
+        {/*    onClick={() => {*/}
+        {/*      const emoji = props.colorBlind*/}
+        {/*        ? ["⬛", "🟦", "🟧"]*/}
+        {/*        : ["⬛", "🟨", "🟩"];*/}
+        {/*      share(*/}
+        {/*        "Result copied to clipboard!",*/}
+        {/*        guesses*/}
+        {/*          .map((guess) =>*/}
+        {/*            clue(guess, target)*/}
+        {/*              .map((c) => emoji[c.clue ?? 0])*/}
+        {/*              .join("")*/}
+        {/*          )*/}
+        {/*          .join("\n")*/}
+        {/*      );*/}
+        {/*    }}*/}
+        {/*  >*/}
+        {/*    Share emoji results*/}
+        {/*  </button>*/}
+        {/*)}*/}
       </p>
     </div>
   );
