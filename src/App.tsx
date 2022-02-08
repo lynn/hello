@@ -162,7 +162,6 @@ function App() {
               <strong>
                 {["Baby", "Easy", "Normal", "Hard", "Ultra Hard"][difficulty]}
               </strong>
-              <strong>{["Normal", "Hard", "Ultra Hard"][difficulty]}</strong>
               <div
                 style={{
                   fontSize: 14,
