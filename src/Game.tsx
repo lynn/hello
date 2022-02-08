@@ -148,8 +148,7 @@ function Game(props: GameProps) {
         return;
       }
 
-      // Baby will short circuit to false
-      if (props.difficulty && !dictionary.includes(currentGuess)) {
+      if (props.difficulty !== Difficulty.Baby && !dictionary.includes(currentGuess)) {
         setHint("Not a valid word");
         return;
       }
