@@ -135,6 +135,10 @@ function Game(props: GameProps) {
       setCurrentGuess((guess) =>
         (guess + key.toLowerCase()).slice(0, wordLength)
       );
+      if ((currentGuess.length + 1) === wordLength && !dictionary.includes(currentGuess + key.toLowerCase())) {
+        setHint("Not a valid word");
+        return;
+      }
       tableRef.current?.focus();
       setHint("");
     } else if (key === "Backspace") {
