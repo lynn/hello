@@ -32,7 +32,10 @@ interface GameProps {
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
 const minLength = 4;
+const defaultLength = 5;
 const maxLength = 11;
+const limitLength = (n: number) =>
+  n >= minLength && n <= maxLength ? n : defaultLength;
 
 function randomTarget(wordLength: number): string {
   const eligible = targets.filter((word) => word.length === wordLength);
@@ -67,9 +70,8 @@ if (initChallenge && !dictionarySet.has(initChallenge)) {
 
 function parseUrlLength(): number {
   const lengthParam = urlParam("length");
-  if (!lengthParam) return 5;
-  const length = Number(lengthParam);
-  return length >= minLength && length <= maxLength ? length : 5;
+  if (!lengthParam) return defaultLength;
+  return limitLength(Number(lengthParam));
 }
 
 function parseUrlGameNumber(): number {
@@ -117,8 +119,7 @@ function Game(props: GameProps) {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
     setChallenge("");
-    const newWordLength =
-      wordLength >= minLength && wordLength <= maxLength ? wordLength : 5;
+    const newWordLength = limitLength(wordLength);
     setWordLength(newWordLength);
     setTarget(randomTarget(newWordLength));
     setHint("");
