@@ -1,5 +1,5 @@
 import "./App.css";
-import { maxGuesses, seed } from "./util";
+import { maxGuesses, seed, urlParam } from "./util";
 import Game from "./Game";
 import { useEffect, useState } from "react";
 import { About } from "./About";
@@ -26,6 +26,8 @@ function useSetting<T>(
   return [current, setSetting];
 }
 
+const todaySeed = new Date().toISOString().replace(/-/g, "").slice(0, 8);
+
 function App() {
   type Page = "game" | "about" | "settings";
   const [page, setPage] = useState<Page>("game");
@@ -43,6 +45,9 @@ function App() {
 
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
+    if (urlParam("today") !== null || urlParam("todas") !== null) {
+      document.location = "?seed=" + todaySeed;
+    }
     setTimeout(() => {
       // Avoid transition on page load
       document.body.style.transition = "0.3s background-color ease-out";
@@ -50,15 +55,14 @@ function App() {
   }, [dark]);
 
   const link = (emoji: string, label: string, page: Page) => (
-    <a
+    <button
       className="emoji-link"
-      href="#"
       onClick={() => setPage(page)}
       title={label}
       aria-label={label}
     >
       {emoji}
-    </a>
+    </button>
   );
 
   return (
@@ -92,15 +96,7 @@ function App() {
           visibility: page === "game" ? "visible" : "hidden",
         }}
       >
-        <a
-          href="#"
-          onClick={() =>
-            (document.location = seed
-              ? "?"
-              : "?seed=" +
-                new Date().toISOString().replace(/-/g, "").slice(0, 8))
-          }
-        >
+        <a href={seed ? "?random" : "?seed=" + todaySeed}>
           {seed ? "Random" : "Today's"}
         </a>
       </div>
@@ -123,7 +119,7 @@ function App() {
               checked={colorBlind}
               onChange={() => setColorBlind((x: boolean) => !x)}
             />
-            <label htmlFor="colorblind-setting">Color blind mode</label>
+            <label htmlFor="colorblind-setting">High-contrast colors</label>
           </div>
           <div className="Settings-setting">
             <input

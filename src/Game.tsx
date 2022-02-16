@@ -6,6 +6,7 @@ import { Keyboard } from "./Keyboard";
 import { RandomGuess } from "./RandomGuess";
 import targetList from "./targets.json";
 import {
+  describeSeed,
   dictionarySet,
   Difficulty,
   pick,
@@ -31,8 +32,8 @@ interface GameProps {
 }
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
-const minWordLength = 4;
-const maxWordLength = 11;
+const minLength = 4;
+const maxLength = 11;
 
 function randomTarget(wordLength: number): string {
   const eligible = targets.filter((word) => word.length === wordLength);
@@ -65,24 +66,51 @@ if (initChallenge && !dictionarySet.has(initChallenge)) {
   challengeError = true;
 }
 
+function parseUrlLength(): number {
+  const lengthParam = urlParam("length");
+  if (!lengthParam) return 5;
+  const length = Number(lengthParam);
+  return length >= minLength && length <= maxLength ? length : 5;
+}
+
+function parseUrlGameNumber(): number {
+  const gameParam = urlParam("game");
+  if (!gameParam) return 1;
+  const gameNumber = Number(gameParam);
+  return gameNumber >= 1 && gameNumber <= 1000 ? gameNumber : 1;
+}
+
 function Game(props: GameProps) {
   const [gameState, setGameState] = useState(GameState.Playing);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
+  const [challenge, setChallenge] = useState<string>(initChallenge);
+  const [wordLength, setWordLength] = useState(
+    challenge ? challenge.length : parseUrlLength()
+  );
+  const [gameNumber, setGameNumber] = useState(parseUrlGameNumber());
+  const [target, setTarget] = useState(() => {
+    resetRng();
+    // Skip RNG ahead to the parsed initial game number:
+    for (let i = 1; i < gameNumber; i++) randomTarget(wordLength);
+    return challenge || randomTarget(wordLength);
+  });
   const [hint, setHint] = useState<string>(
     challengeError
       ? `Invalid challenge string, playing random game.`
       : `Make your first guess!`
   );
-  const [challenge, setChallenge] = useState<string>(initChallenge);
-  const [wordLength, setWordLength] = useState(
-    challenge ? challenge.length : 5
-  );
-  const [target, setTarget] = useState(() => {
-    resetRng();
-    return challenge || randomTarget(wordLength);
-  });
-  const [gameNumber, setGameNumber] = useState(1);
+  const currentSeedParams = () =>
+    `?seed=${seed}&length=${wordLength}&game=${gameNumber}`;
+  useEffect(() => {
+    if (seed) {
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname + currentSeedParams()
+      );
+    }
+  }, [wordLength, gameNumber]);
   const tableRef = useRef<HTMLTableElement>(null);
   const startNextGame = () => {
     if (challenge) {
@@ -91,17 +119,20 @@ function Game(props: GameProps) {
     }
     setChallenge("");
     const newWordLength =
-      wordLength < minWordLength || wordLength > maxWordLength ? 5 : wordLength;
+      wordLength >= minLength && wordLength <= maxLength ? wordLength : 5;
     setWordLength(newWordLength);
     setTarget(randomTarget(newWordLength));
+    setHint("");
     setGuesses([]);
     setCurrentGuess("");
-    setHint("");
     setGameState(GameState.Playing);
     setGameNumber((x) => x + 1);
   };
 
-  async function share(url: string, copiedHint: string, text?: string) {
+  async function share(copiedHint: string, text?: string) {
+    const url = seed
+      ? window.location.origin + window.location.pathname + currentSeedParams()
+      : getChallengeUrl(target);
     const body = url + (text ? "\n\n" + text : "");
     if (
       /android|iphone|ipad|ipod|webos/i.test(navigator.userAgent) &&
@@ -232,8 +263,8 @@ function Game(props: GameProps) {
         <label htmlFor="wordLength">Letters:</label>
         <input
           type="range"
-          min={minWordLength}
-          max={maxWordLength}
+          min={minLength}
+          max={maxLength}
           id="wordLength"
           disabled={
             gameState === GameState.Playing &&
@@ -289,25 +320,28 @@ function Game(props: GameProps) {
         onKey={onKey}
       />
       <RandomGuess onKey={onKey} wordLength={wordLength} />
-      {gameState !== GameState.Playing && (
-        <p>
-          <button
-            onClick={() => {
-              share(
-                getChallengeUrl(target),
-                "Challenge link copied to clipboard!"
-              );
-            }}
-          >
-            Challenge a friend to this word
-          </button>{" "}
+      <div className="Game-seed-info">
+        {challenge
+          ? "playing a challenge game"
+          : seed
+          ? `${describeSeed(seed)} — length ${wordLength}, game ${gameNumber}`
+          : "playing a random game"}
+      </div>
+      <p>
+        <button
+          onClick={() => {
+            share("Link copied to clipboard!");
+          }}
+        >
+          Share a link to this game
+        </button>{" "}
+        {gameState !== GameState.Playing && (
           <button
             onClick={() => {
               const emoji = props.colorBlind
                 ? ["⬛", "🟦", "🟧"]
                 : ["⬛", "🟨", "🟩"];
               share(
-                getChallengeUrl(target),
                 "Result copied to clipboard!",
                 guesses
                   .map((guess) =>
@@ -321,15 +355,8 @@ function Game(props: GameProps) {
           >
             Share emoji results
           </button>
-        </p>
-      )}
-      {challenge ? (
-        <div className="Game-seed-info">playing a challenge game</div>
-      ) : seed ? (
-        <div className="Game-seed-info">
-          seed {seed}, length {wordLength}, game {gameNumber}
-        </div>
-      ) : undefined}
+        )}
+      </p>
     </div>
   );
 }
