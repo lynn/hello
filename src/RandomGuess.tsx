@@ -1,6 +1,7 @@
 interface GuessProps {
   onKey: (key: string) => void;
   wordLength: number;
+  randomTarget: (wordLength: number) => string;
 }
 
 export function RandomGuess(props: GuessProps) {
@@ -10,13 +11,11 @@ export function RandomGuess(props: GuessProps) {
         tabIndex={-1}
         role="button"
         onClick={() => {
-          let guess = "";
           for (let i = 0; i < props.wordLength; i++) {
-            props.onKey("Backspace")
+            props.onKey("Backspace");
           }
-          const chars = "abcdefghijklmnopqrstuvwxyz";
-          for (let i = 0; i < props.wordLength; i++) {
-            let letter = chars.charAt(Math.random() * chars.length)
+          const guess = props.randomTarget(props.wordLength);
+          for (const letter of guess) {
             props.onKey(letter);
           }
         }}

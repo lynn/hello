@@ -319,7 +319,7 @@ function Game(props: GameProps) {
         letterInfo={letterInfo}
         onKey={onKey}
       />
-      <RandomGuess onKey={onKey} wordLength={wordLength} />
+      <RandomGuess onKey={onKey} wordLength={wordLength} randomTarget={randomTarget} />
       <div className="Game-seed-info">
         {challenge
           ? "playing a challenge game"
