@@ -1,9 +1,11 @@
 import { Difficulty, englishNumbers, ordinal } from "./util";
 
+const impossible = difficulty === Difficulty.Impossible;
 export enum Clue {
   Absent,
   Elsewhere,
   Correct,
+  Red,
 }
 
 export interface CluedLetter {
@@ -20,6 +22,9 @@ export function clue(word: string, target: string): CluedLetter[] {
   });
   return word.split("").map((letter, i) => {
     let j: number;
+    if (impossible) {
+      return { clue: Clue.Red, letter };
+    }
     if (target[i] === letter) {
       return { clue: Clue.Correct, letter };
     } else if ((j = elusive.indexOf(letter)) > -1) {
@@ -37,6 +42,8 @@ export function clueClass(clue: Clue): string {
     return "letter-absent";
   } else if (clue === Clue.Elsewhere) {
     return "letter-elsewhere";
+  } else if (clue === Clue.Red) {
+    return "letter-red";
   } else {
     return "letter-correct";
   }
@@ -58,6 +65,7 @@ export function describeClue(clue: CluedLetter[]): string {
     .join(", ");
 }
 
+// Impossible difficulty has no need for restricting usable guesses
 export function violation(
   difficulty: Difficulty,
   clues: CluedLetter[],
