@@ -72,6 +72,7 @@ function App() {
           style={{
             color: difficulty > 0 ? "#e66" : "inherit",
             fontStyle: difficulty > 1 ? "italic" : "inherit",
+            fontStyle: difficulty > 2 ? "bold" : "inherit", // I have no idea what this syntax means. I'm just mimicing and hoping for the best
           }}
         >
           hell
@@ -126,13 +127,13 @@ function App() {
               id="difficulty-setting"
               type="range"
               min="0"
-              max="2"
+              max="3"
               value={difficulty}
               onChange={(e) => setDifficulty(+e.target.value)}
             />
             <div>
               <label htmlFor="difficulty-setting">Difficulty:</label>
-              <strong>{["Normal", "Hard", "Ultra Hard"][difficulty]}</strong>
+              <strong>{["Normal", "Hard", "Ultra Hard", "IMPOSSIBLE"][difficulty]}</strong>
               <div
                 style={{
                   fontSize: 14,
@@ -146,6 +147,7 @@ function App() {
                     `Guesses must be valid dictionary words.`,
                     `Wordle's "Hard Mode". Green letters must stay fixed, and yellow letters must be reused.`,
                     `An even stricter Hard Mode. Yellow letters must move away from where they were clued, and gray clues must be obeyed.`,
+                    `By far the hardest mode. You are only given a full row of red if you guess incorrectly, with absolutely no feedback. There's a reason it's called Impossible.`
                   ][difficulty]
                 }
               </div>

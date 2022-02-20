@@ -4,6 +4,7 @@ export enum Difficulty {
   Normal,
   Hard,
   UltraHard,
+  Impossible,
 }
 
 export const maxGuesses = 6;
