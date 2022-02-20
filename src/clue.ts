@@ -22,7 +22,7 @@ export function clue(word: string, target: string): CluedLetter[] {
   });
   return word.split("").map((letter, i) => {
     let j: number;
-    if (impossible) {
+    if (impossible && word !== target) { // Make sure the guess doesn't match the target word before filling with red
       return { clue: Clue.Red, letter };
     }
     if (target[i] === letter) {
