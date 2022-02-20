@@ -139,6 +139,12 @@ table.Game-rows > tbody {
   color: white !important;
 }
 
+.letter-red {
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  background-color: #ff0000;
+  color: white !important;
+}
+
 body.dark {
   background-color: #404040;
   color: #e0e0e0;
