@@ -44,6 +44,11 @@ body {
   margin-inline-start: 16px;
   width: 5em;
   text-align: start;
+  opacity: 1;
+  transition: all 1s;
+}
+.hidden {
+  opacity: 0;
 }
 
 .App-container {
@@ -120,6 +125,16 @@ table.Game-rows > tbody {
 
 .Game-keyboard-button:focus {
   outline: none;
+}
+
+.Button-label {
+  margin: 0;
+  padding: 0;
+}
+
+.Button-subscript {
+  margin-left: 2px;
+  font-size: 10px;
 }
 
 .letter-correct {

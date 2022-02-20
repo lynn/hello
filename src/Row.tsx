@@ -10,7 +10,7 @@ interface RowProps {
   rowState: RowState;
   wordLength: number;
   cluedLetters: CluedLetter[];
-  annotation?: string;
+  annotation?: string | null;
 }
 
 export function Row(props: RowProps) {
@@ -42,12 +42,13 @@ export function Row(props: RowProps) {
     });
   let rowClass = "Row";
   if (isLockedIn) rowClass += " Row-locked-in";
+
+  const showScore = !!props.annotation;
+  const annotationClassName = `Row-annotation${showScore ? "" : " hidden"}`;
   return (
     <tr className={rowClass}>
       {letterDivs}
-      {props.annotation && (
-        <span className="Row-annotation">{props.annotation}</span>
-      )}
+      <td className={annotationClassName}>{props.annotation}</td>
     </tr>
   );
 }
