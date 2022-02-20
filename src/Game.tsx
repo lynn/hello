@@ -8,6 +8,7 @@ import {
   describeSeed,
   dictionarySet,
   Difficulty,
+  gameName,
   pick,
   resetRng,
   seed,
@@ -340,15 +341,17 @@ function Game(props: GameProps) {
               const emoji = props.colorBlind
                 ? ["⬛", "🟦", "🟧"]
                 : ["⬛", "🟨", "🟩"];
+              const score = gameState === GameState.Lost ? "X" : guesses.length;
               share(
                 "Result copied to clipboard!",
-                guesses
-                  .map((guess) =>
-                    clue(guess, target)
-                      .map((c) => emoji[c.clue ?? 0])
-                      .join("")
-                  )
-                  .join("\n")
+                `${gameName} ${score}/${props.maxGuesses}\n` +
+                  guesses
+                    .map((guess) =>
+                      clue(guess, target)
+                        .map((c) => emoji[c.clue ?? 0])
+                        .join("")
+                    )
+                    .join("\n")
               );
             }}
           >
