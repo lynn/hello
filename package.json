@@ -1,7 +1,6 @@
 {
-  "name": "wordl",
+  "name": "unscrabble-dle",
   "version": "0.1.0",
-  "homepage": "http://hellowordl.net/",
   "private": false,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.1",
@@ -9,7 +8,6 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.4.0",
     "@types/node": "^16.11.17",
-    "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
     "gh-pages": "^3.2.3",
     "react": "^17.0.2",
@@ -30,7 +28,13 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": 2021,
+      "sourceType": "module",
+      "project": "./tsconfig.json"
+    }
   },
   "browserslist": {
     "production": [
@@ -43,5 +47,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.39"
   }
 }

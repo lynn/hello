@@ -1,4 +1,5 @@
 import { Clue, clueClass } from "./clue";
+import letterPoints from "./letterPoints";
 
 interface KeyboardProps {
   layout: string;
@@ -38,7 +39,10 @@ export function Keyboard(props: KeyboardProps) {
                   props.onKey(label);
                 }}
               >
-                {label.replace("Backspace", "⌫")}
+                <p className="Button-label">
+                  {label.replace("Backspace", "⌫")}
+                  <sub className="Button-subscript">{letterPoints[label]}</sub>
+                </p>
               </div>
             );
           })}

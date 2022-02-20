@@ -15,6 +15,7 @@ import {
   urlParam,
 } from "./util";
 import { decode, encode } from "./base64";
+import letterPoints from "./letterPoints";
 
 enum GameState {
   Playing,
@@ -50,6 +51,12 @@ function getChallengeUrl(target: string): string {
     "?challenge=" +
     encode(target)
   );
+}
+
+function getWordScore(word: string): number {
+  return word.split("").reduce((acc, letter) => {
+    return acc + letterPoints[letter];
+  }, 0);
 }
 
 let initChallenge = "";
@@ -191,10 +198,13 @@ function Game(props: GameProps) {
       setGuesses((guesses) => guesses.concat([currentGuess]));
       setCurrentGuess((guess) => "");
 
-      const gameOver = (verbed: string) =>
-        `You ${verbed}! The answer was ${target.toUpperCase()}. (Enter to ${
+      const gameOver = (verbed: string) => {
+        const score = guesses.map(getWordScore).reduce((acc, val) => acc + val);
+        const message = `You ${verbed}! The answer was ${target.toUpperCase()}. Your score was ${score}. (Enter to ${
           challenge ? "play a random game" : "play again"
         })`;
+        return message;
+      };
 
       if (currentGuess === target) {
         setHint(gameOver("won"));
@@ -240,6 +250,15 @@ function Game(props: GameProps) {
           }
         }
       }
+      const editing = i === guesses.length;
+      let wordsUpToIndex: string[] = [];
+      if (lockedIn) wordsUpToIndex = guesses.slice(0, i);
+      let runningScore = wordsUpToIndex
+        .map(getWordScore)
+        .reduce((acc, val) => acc + val, 0);
+      runningScore += getWordScore(guess);
+      const hasScore = i < guesses.length || i === 0;
+      let annotation = hasScore ? runningScore.toString() : null;
       return (
         <Row
           key={i}
@@ -247,11 +266,12 @@ function Game(props: GameProps) {
           rowState={
             lockedIn
               ? RowState.LockedIn
-              : i === guesses.length
+              : editing
               ? RowState.Editing
               : RowState.Pending
           }
           cluedLetters={cluedLetters}
+          annotation={annotation}
         />
       );
     });
