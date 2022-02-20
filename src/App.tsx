@@ -26,7 +26,7 @@ function useSetting<T>(
   return [current, setSetting];
 }
 
-const todaySeed = new Date().toISOString().replace(/-/g, "").slice(0, 8);
+const todaySeed = new Date().toLocaleDateString().replace(/\//g, "");
 
 function App() {
   type Page = "game" | "about" | "settings";
