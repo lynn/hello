@@ -1,6 +1,6 @@
-# hello wordl
+# Scrabble-dle
 
-It's [Wordle](https://www.powerlanguage.co.uk/wordle/) but you can play forever!
+It's [Wordle](https://www.powerlanguage.co.uk/wordle/) but kind of like Scrabble!
 
 Play it [**here**](https://hellowordl.net/).
 
