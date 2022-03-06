@@ -1,4 +1,5 @@
 import { Clue, clueClass, CluedLetter, clueWord } from "./clue";
+import letterPoints from "./letterPoints";
 
 export enum RowState {
   LockedIn,
@@ -24,6 +25,7 @@ export function Row(props: RowProps) {
       if (isLockedIn && clue !== undefined) {
         letterClass += " " + clueClass(clue);
       }
+      const pointValue = letterPoints[letter];
       return (
         <td
           key={i}
@@ -36,19 +38,19 @@ export function Row(props: RowProps) {
               : ""
           }
         >
-          {letter}
+          <span>
+            {letter}
+            <sub className="Button-subscript">{pointValue}</sub>
+          </span>
         </td>
       );
     });
   let rowClass = "Row";
   if (isLockedIn) rowClass += " Row-locked-in";
 
-  const showScore = !!props.annotation;
-  const annotationClassName = `Row-annotation${showScore ? "" : " hidden"}`;
   return (
-    <tr className={rowClass}>
+    <tr className={rowClass} data-row-score={props.annotation}>
       {letterDivs}
-      <td className={annotationClassName}>{props.annotation}</td>
     </tr>
   );
 }

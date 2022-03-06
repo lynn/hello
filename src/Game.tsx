@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Row, RowState } from "./Row";
+import { BottomRow } from "./BottomRow";
 import dictionary from "./dictionary.json";
 import { Clue, clue, describeClue, violation } from "./clue";
 import { Keyboard } from "./Keyboard";
@@ -251,14 +252,9 @@ function Game(props: GameProps) {
         }
       }
       const editing = i === guesses.length;
-      let wordsUpToIndex: string[] = [];
-      if (lockedIn) wordsUpToIndex = guesses.slice(0, i);
-      let runningScore = wordsUpToIndex
-        .map(getWordScore)
-        .reduce((acc, val) => acc + val, 0);
-      runningScore += getWordScore(guess);
+      const score = getWordScore(guess);
       const hasScore = i < guesses.length || i === 0;
-      let annotation = hasScore ? runningScore.toString() : null;
+      let annotation = hasScore ? score.toString() : null;
       return (
         <Row
           key={i}
@@ -275,6 +271,12 @@ function Game(props: GameProps) {
         />
       );
     });
+
+  const totalScore = guesses
+    .map(getWordScore)
+    .reduce((acc, val) => acc + val, 0);
+
+  tableRows.push(<BottomRow wordLength={wordLength} totalScore={totalScore} />);
 
   return (
     <div className="Game" style={{ display: props.hidden ? "none" : "block" }}>
@@ -329,6 +331,7 @@ function Game(props: GameProps) {
         style={{
           userSelect: /https?:/.test(hint) ? "text" : "none",
           whiteSpace: "pre-wrap",
+          margin: "8px 0",
         }}
       >
         {hint || `\u00a0`}
