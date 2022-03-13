@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Row, RowState } from "./Row";
 import { BottomRow } from "./BottomRow";
 import dictionary from "./dictionary.json";
@@ -117,17 +117,19 @@ function Game(props: GameProps) {
       ? `Invalid challenge string, playing random game.`
       : `Make your first guess!`
   );
-  const currentSeedParams = () =>
-    `?seed=${seed}&length=${wordLength}&game=${gameNumber}`;
+  const getCurrentSeedParams = useCallback(
+    () => `?seed=${seed}&length=${wordLength}&game=${gameNumber}`,
+    [gameNumber, wordLength]
+  );
   useEffect(() => {
     if (seed) {
       window.history.replaceState(
         {},
         document.title,
-        window.location.pathname + currentSeedParams()
+        window.location.pathname + getCurrentSeedParams()
       );
     }
-  }, [wordLength, gameNumber]);
+  }, [wordLength, gameNumber, getCurrentSeedParams]);
   const tableRef = useRef<HTMLTableElement>(null);
   const startNextGame = () => {
     if (challenge) {
@@ -148,7 +150,9 @@ function Game(props: GameProps) {
 
   async function share(copiedHint: string, text?: string) {
     const url = seed
-      ? window.location.origin + window.location.pathname + currentSeedParams()
+      ? window.location.origin +
+        window.location.pathname +
+        getCurrentSeedParams()
       : getChallengeUrl(target);
     const body = url + (text ? "\n\n" + text : "");
     if (
@@ -172,45 +176,50 @@ function Game(props: GameProps) {
     setHint(url);
   }
 
-  const onKey = (key: string) => {
-    if (gameState !== GameState.Playing) {
-      if (key === "Enter") {
-        startNextGame();
-      }
-      return;
-    }
-    if (guesses.length === props.maxGuesses) return;
-    if (/^[a-z]$/i.test(key)) {
-      setCurrentGuess((guess) =>
-        (guess + key.toLowerCase()).slice(0, wordLength)
-      );
-      tableRef.current?.focus();
-      setHint("");
-    } else if (key === "Backspace") {
-      setCurrentGuess((guess) => guess.slice(0, -1));
-      setHint("");
-    } else if (key === "Enter") {
-      if (currentGuess.length !== wordLength) {
-        setHint("Too short");
+  const onKey = useCallback(
+    (key: string) => {
+      if (gameState !== GameState.Playing) {
+        if (key === "Enter") {
+          startNextGame();
+        }
         return;
       }
-      if (!dictionary.includes(currentGuess)) {
-        setHint("Not a valid word");
-        return;
-      }
-      for (const g of guesses) {
-        const c = clue(g, target);
-        const feedback = violation(props.difficulty, c, currentGuess);
-        if (feedback) {
-          setHint(feedback);
+      if (guesses.length === props.maxGuesses) return;
+      if (/^[a-z]$/i.test(key)) {
+        setCurrentGuess((guess) =>
+          (guess + key.toLowerCase()).slice(0, wordLength)
+        );
+        tableRef.current?.focus();
+        setHint("");
+      } else if (key === "Backspace") {
+        setCurrentGuess((guess) => guess.slice(0, -1));
+        setHint("");
+      } else if (key === "Enter") {
+        if (currentGuess.length !== wordLength) {
+          setHint("Too short");
           return;
         }
+        if (!dictionary.includes(currentGuess)) {
+          setHint("Not a valid word");
+          return;
+        }
+        for (const g of guesses) {
+          const c = clue(g, target);
+          const feedback = violation(props.difficulty, c, currentGuess);
+          if (feedback) {
+            setHint(feedback);
+            return;
+          }
+        }
+        setGuesses((guesses) => guesses.concat([currentGuess]));
+        setCurrentGuess((guess) => "");
       }
-      setGuesses((guesses) => guesses.concat([currentGuess]));
-      setCurrentGuess((guess) => "");
-    }
-  };
+    },
+    // eslint-disable-next-line
+    [currentGuess, gameState, target, startNextGame]
+  );
 
+  // Runs after every guess
   useEffect(() => {
     const gameOver = (verbed: string) => {
       const score = guesses
@@ -242,7 +251,7 @@ function Game(props: GameProps) {
       setHint("");
       speak(describeClue(clue(currentGuess, target)));
     }
-  }, [guesses]);
+  }, [guesses]); // eslint-disable-line
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -257,7 +266,7 @@ function Game(props: GameProps) {
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [currentGuess, gameState]);
+  }, [currentGuess, gameState, onKey]);
 
   let letterInfo = new Map<string, Clue>();
   const tableRows = Array(props.maxGuesses)
