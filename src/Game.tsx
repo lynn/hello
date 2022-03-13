@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Row, RowState } from "./Row";
 import { BottomRow } from "./BottomRow";
 import dictionary from "./dictionary.json";
-import { Clue, clue, describeClue, violation } from "./clue";
+import { Clue, clue, CluedLetter, describeClue, violation } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
 import {
@@ -58,6 +58,15 @@ function getChallengeUrl(target: string): string {
   );
 }
 
+function getCluedWordScore(cluedLetters: CluedLetter[]) {
+  let wordScore = 0;
+  cluedLetters.forEach(({ clue, letter }, i) => {
+    if (clue === Clue.Absent) wordScore += letterPoints[letter];
+    else if (clue === Clue.Elsewhere) wordScore += letterPoints[letter] / 2;
+  });
+  return wordScore;
+}
+
 function getWordScore(word: string): number {
   return word.split("").reduce((acc, letter) => {
     return acc + letterPoints[letter];
@@ -94,6 +103,7 @@ function Game(props: GameProps) {
   const [gameState, setGameState] = useState(GameState.Playing);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
+  const [totalScore, setTotalScore] = useState<number>(0);
   const [challenge, setChallenge] = useState<string>(initChallenge);
   const [wordLength, setWordLength] = useState(
     challenge ? challenge.length : parseUrlLength()
@@ -200,27 +210,41 @@ function Game(props: GameProps) {
       }
       setGuesses((guesses) => guesses.concat([currentGuess]));
       setCurrentGuess((guess) => "");
-
-      const gameOver = (verbed: string) => {
-        const score = guesses.map(getWordScore).reduce((acc, val) => acc + val);
-        const message = `You ${verbed}! The answer was ${target.toUpperCase()}. Your score was ${score}. (Enter to ${
-          challenge ? "play a random game" : "play again"
-        })`;
-        return message;
-      };
-
-      if (currentGuess === target) {
-        setHint(gameOver("won"));
-        setGameState(GameState.Won);
-      } else if (guesses.length + 1 === props.maxGuesses) {
-        setHint(gameOver("lost"));
-        setGameState(GameState.Lost);
-      } else {
-        setHint("");
-        speak(describeClue(clue(currentGuess, target)));
-      }
     }
   };
+
+  useEffect(() => {
+    const gameOver = (verbed: string) => {
+      const score = guesses
+        .map((guess) => clue(guess, target))
+        .map(getCluedWordScore)
+        .reduce((acc, val) => acc + val);
+      const message = `You ${verbed}! The answer was ${target.toUpperCase()}. Your score was ${score}. (Enter to ${
+        challenge ? "play a random game" : "play again"
+      })`;
+      return message;
+    };
+
+    let runningScore = 0;
+
+    guesses.forEach((guess, i) => {
+      const cluedLetters = clue(guess, target);
+      runningScore += getCluedWordScore(cluedLetters);
+    });
+
+    setTotalScore(runningScore);
+
+    if (currentGuess === target) {
+      setHint(gameOver("won"));
+      setGameState(GameState.Won);
+    } else if (guesses.length + 1 === props.maxGuesses) {
+      setHint(gameOver("lost"));
+      setGameState(GameState.Lost);
+    } else {
+      setHint("");
+      speak(describeClue(clue(currentGuess, target)));
+    }
+  }, [guesses]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -254,7 +278,9 @@ function Game(props: GameProps) {
         }
       }
       const editing = i === guesses.length;
-      const score = getWordScore(guess);
+      const score = lockedIn
+        ? getCluedWordScore(cluedLetters)
+        : getWordScore(guess);
       const hasScore = i < guesses.length || i === 0;
       let annotation = hasScore ? score.toString() : null;
       return (
@@ -274,11 +300,9 @@ function Game(props: GameProps) {
       );
     });
 
-  const totalScore = guesses
-    .map(getWordScore)
-    .reduce((acc, val) => acc + val, 0);
-
-  tableRows.push(<BottomRow wordLength={wordLength} totalScore={totalScore} />);
+  tableRows.push(
+    <BottomRow key="bottom" wordLength={wordLength} totalScore={totalScore} />
+  );
 
   return (
     <div className="Game" style={{ display: props.hidden ? "none" : "block" }}>
