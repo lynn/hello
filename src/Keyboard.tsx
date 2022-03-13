@@ -43,6 +43,7 @@ export function Keyboard(props: KeyboardProps) {
                   <sub className="Button-subscript">{letterPoints[label]}</sub>
                 </span>
               </button>
+
             );
           })}
         </div>
