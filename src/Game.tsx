@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Row, RowState } from "./Row";
 import { BottomRow } from "./BottomRow";
 import dictionary from "./dictionary.json";
-import { Clue, clue, describeClue, violation } from "./clue";
+import { Clue, clue, CluedLetter, describeClue, violation } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
 import {
@@ -54,6 +54,15 @@ function getChallengeUrl(target: string): string {
   );
 }
 
+function getCluedWordScore(cluedLetters: CluedLetter[]) {
+  let wordScore = 0;
+  cluedLetters.forEach(({ clue, letter }, i) => {
+    if (clue === Clue.Absent) wordScore += letterPoints[letter];
+    else if (clue === Clue.Elsewhere) wordScore += letterPoints[letter] / 2;
+  });
+  return wordScore;
+}
+
 function getWordScore(word: string): number {
   return word.split("").reduce((acc, letter) => {
     return acc + letterPoints[letter];
@@ -91,6 +100,7 @@ function Game(props: GameProps) {
   const [gameState, setGameState] = useState(GameState.Playing);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
+  const [totalScore, setTotalScore] = useState<number>(0);
   const [challenge, setChallenge] = useState<string>(initChallenge);
   const [wordLength, setWordLength] = useState(
     challenge ? challenge.length : parseUrlLength()
@@ -107,17 +117,19 @@ function Game(props: GameProps) {
       ? `Invalid challenge string, playing random game.`
       : `Make your first guess!`
   );
-  const currentSeedParams = () =>
-    `?seed=${seed}&length=${wordLength}&game=${gameNumber}`;
+  const getCurrentSeedParams = useCallback(
+    () => `?seed=${seed}&length=${wordLength}&game=${gameNumber}`,
+    [gameNumber, wordLength]
+  );
   useEffect(() => {
     if (seed) {
       window.history.replaceState(
         {},
         document.title,
-        window.location.pathname + currentSeedParams()
+        window.location.pathname + getCurrentSeedParams()
       );
     }
-  }, [wordLength, gameNumber]);
+  }, [wordLength, gameNumber, getCurrentSeedParams]);
   const tableRef = useRef<HTMLTableElement>(null);
   const startNextGame = () => {
     if (challenge) {
@@ -138,7 +150,9 @@ function Game(props: GameProps) {
 
   async function share(copiedHint: string, text?: string) {
     const url = seed
-      ? window.location.origin + window.location.pathname + currentSeedParams()
+      ? window.location.origin +
+        window.location.pathname +
+        getCurrentSeedParams()
       : getChallengeUrl(target);
     const body = url + (text ? "\n\n" + text : "");
     if (
@@ -162,63 +176,82 @@ function Game(props: GameProps) {
     setHint(url);
   }
 
-  const onKey = (key: string) => {
-    if (gameState !== GameState.Playing) {
-      if (key === "Enter") {
-        startNextGame();
-      }
-      return;
-    }
-    if (guesses.length === props.maxGuesses) return;
-    if (/^[a-z]$/i.test(key)) {
-      setCurrentGuess((guess) =>
-        (guess + key.toLowerCase()).slice(0, wordLength)
-      );
-      tableRef.current?.focus();
-      setHint("");
-    } else if (key === "Backspace") {
-      setCurrentGuess((guess) => guess.slice(0, -1));
-      setHint("");
-    } else if (key === "Enter") {
-      if (currentGuess.length !== wordLength) {
-        setHint("Too short");
+  const onKey = useCallback(
+    (key: string) => {
+      if (gameState !== GameState.Playing) {
+        if (key === "Enter") {
+          startNextGame();
+        }
         return;
       }
-      if (!dictionary.includes(currentGuess)) {
-        setHint("Not a valid word");
-        return;
-      }
-      for (const g of guesses) {
-        const c = clue(g, target);
-        const feedback = violation(props.difficulty, c, currentGuess);
-        if (feedback) {
-          setHint(feedback);
+      if (guesses.length === props.maxGuesses) return;
+      if (/^[a-z]$/i.test(key)) {
+        setCurrentGuess((guess) =>
+          (guess + key.toLowerCase()).slice(0, wordLength)
+        );
+        tableRef.current?.focus();
+        setHint("");
+      } else if (key === "Backspace") {
+        setCurrentGuess((guess) => guess.slice(0, -1));
+        setHint("");
+      } else if (key === "Enter") {
+        if (currentGuess.length !== wordLength) {
+          setHint("Too short");
           return;
         }
+        if (!dictionary.includes(currentGuess)) {
+          setHint("Not a valid word");
+          return;
+        }
+        for (const g of guesses) {
+          const c = clue(g, target);
+          const feedback = violation(props.difficulty, c, currentGuess);
+          if (feedback) {
+            setHint(feedback);
+            return;
+          }
+        }
+        setGuesses((guesses) => guesses.concat([currentGuess]));
+        setCurrentGuess((guess) => "");
       }
-      setGuesses((guesses) => guesses.concat([currentGuess]));
-      setCurrentGuess((guess) => "");
+    },
+    // eslint-disable-next-line
+    [currentGuess, gameState, target, startNextGame]
+  );
 
-      const gameOver = (verbed: string) => {
-        const score = guesses.map(getWordScore).reduce((acc, val) => acc + val);
-        const message = `You ${verbed}! The answer was ${target.toUpperCase()}. Your score was ${score}. (Enter to ${
-          challenge ? "play a random game" : "play again"
-        })`;
-        return message;
-      };
+  // Runs after every guess
+  useEffect(() => {
+    const gameOver = (verbed: string) => {
+      const score = guesses
+        .map((guess) => clue(guess, target))
+        .map(getCluedWordScore)
+        .reduce((acc, val) => acc + val);
+      const message = `You ${verbed}! The answer was ${target.toUpperCase()}. Your score was ${score}. (Enter to ${
+        challenge ? "play a random game" : "play again"
+      })`;
+      return message;
+    };
 
-      if (currentGuess === target) {
-        setHint(gameOver("won"));
-        setGameState(GameState.Won);
-      } else if (guesses.length + 1 === props.maxGuesses) {
-        setHint(gameOver("lost"));
-        setGameState(GameState.Lost);
-      } else {
-        setHint("");
-        speak(describeClue(clue(currentGuess, target)));
-      }
+    let runningScore = 0;
+
+    guesses.forEach((guess, i) => {
+      const cluedLetters = clue(guess, target);
+      runningScore += getCluedWordScore(cluedLetters);
+    });
+
+    setTotalScore(runningScore);
+
+    if (currentGuess === target) {
+      setHint(gameOver("won"));
+      setGameState(GameState.Won);
+    } else if (guesses.length + 1 === props.maxGuesses) {
+      setHint(gameOver("lost"));
+      setGameState(GameState.Lost);
+    } else {
+      setHint("");
+      speak(describeClue(clue(currentGuess, target)));
     }
-  };
+  }, [guesses]); // eslint-disable-line
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -233,7 +266,7 @@ function Game(props: GameProps) {
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [currentGuess, gameState]);
+  }, [currentGuess, gameState, onKey]);
 
   let letterInfo = new Map<string, Clue>();
   const tableRows = Array(props.maxGuesses)
@@ -252,7 +285,9 @@ function Game(props: GameProps) {
         }
       }
       const editing = i === guesses.length;
-      const score = getWordScore(guess);
+      const score = lockedIn
+        ? getCluedWordScore(cluedLetters)
+        : getWordScore(guess);
       const hasScore = i < guesses.length || i === 0;
       let annotation = hasScore ? score.toString() : null;
       return (
@@ -272,11 +307,9 @@ function Game(props: GameProps) {
       );
     });
 
-  const totalScore = guesses
-    .map(getWordScore)
-    .reduce((acc, val) => acc + val, 0);
-
-  tableRows.push(<BottomRow wordLength={wordLength} totalScore={totalScore} />);
+  tableRows.push(
+    <BottomRow key="bottom" wordLength={wordLength} totalScore={totalScore} />
+  );
 
   return (
     <div className="Game" style={{ display: props.hidden ? "none" : "block" }}>
