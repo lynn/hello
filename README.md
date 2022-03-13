@@ -1,4 +1,4 @@
-# Scrabble-dle
+# Scrabdle
 
 It's [Wordle](https://www.powerlanguage.co.uk/wordle/) but kind of like Scrabble!
 
