@@ -30,20 +30,20 @@ export function Keyboard(props: KeyboardProps) {
               className += " Game-keyboard-button-wide";
             }
             return (
-              <div
+              <button
                 tabIndex={-1}
                 key={j}
-                role="button"
                 className={className}
                 onClick={() => {
                   props.onKey(label);
                 }}
               >
-                <p className="Button-label">
+                <span className="Button-label">
                   {label.replace("Backspace", "⌫")}
                   <sub className="Button-subscript">{letterPoints[label]}</sub>
-                </p>
-              </div>
+                </span>
+              </button>
+
             );
           })}
         </div>
