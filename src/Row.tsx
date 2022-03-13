@@ -25,7 +25,12 @@ export function Row(props: RowProps) {
       if (isLockedIn && clue !== undefined) {
         letterClass += " " + clueClass(clue);
       }
-      const pointValue = letterPoints[letter];
+      let pointValue = letterPoints[letter];
+      if (isLockedIn) {
+        if (clue === Clue.Elsewhere) pointValue /= 2;
+        else if (clue === Clue.Correct) pointValue = 0;
+      }
+
       return (
         <td
           key={i}
