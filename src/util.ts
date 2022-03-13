@@ -6,7 +6,7 @@ export enum Difficulty {
   UltraHard,
 }
 
-export const gameName = "hello wordl";
+export const gameName = 'Scrabdle'
 export const maxGuesses = 6;
 
 export const dictionarySet: Set<string> = new Set(dictionary);
@@ -58,7 +58,7 @@ export function speak(
 }
 
 export function ordinal(n: number): string {
-  return n + ([, "st", "nd", "rd"][(n % 100 >> 3) ^ 1 && n % 10] || "th");
+  return n + ([undefined, "st", "nd", "rd"][(n % 100 >> 3) ^ 1 && n % 10] || "th");
 }
 
 export const englishNumbers =

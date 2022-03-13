@@ -183,10 +183,6 @@ table.Game-rows tr:last-child::after {
 .BottomRow {
   height: 80px;
   font-size: 28px;
-}
-
-{
-  font-size: 28px;
   color: white;
 }
 

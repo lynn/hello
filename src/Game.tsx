@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Row, RowState } from "./Row";
 import { BottomRow } from "./BottomRow";
-import dictionary from "./dictionary.json";
+import dictionary from "./dictionary.json"; // has different lengths for easier syncing
 import { Clue, clue, CluedLetter, describeClue, violation } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
@@ -34,14 +34,10 @@ interface GameProps {
 }
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
-const minLength = 4;
-const defaultLength = 5;
-const maxLength = 11;
-const limitLength = (n: number) =>
-  n >= minLength && n <= maxLength ? n : defaultLength;
+const WORD_LENGTH = 5;
 
-function randomTarget(wordLength: number): string {
-  const eligible = targets.filter((word) => word.length === wordLength);
+function randomTarget(): string {
+  const eligible = targets.filter((word) => word.length === WORD_LENGTH);
   let candidate: string;
   do {
     candidate = pick(eligible);
@@ -86,12 +82,6 @@ if (initChallenge && !dictionarySet.has(initChallenge)) {
   challengeError = true;
 }
 
-function parseUrlLength(): number {
-  const lengthParam = urlParam("length");
-  if (!lengthParam) return defaultLength;
-  return limitLength(Number(lengthParam));
-}
-
 function parseUrlGameNumber(): number {
   const gameParam = urlParam("game");
   if (!gameParam) return 1;
@@ -105,15 +95,12 @@ function Game(props: GameProps) {
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [totalScore, setTotalScore] = useState<number>(0);
   const [challenge, setChallenge] = useState<string>(initChallenge);
-  const [wordLength, setWordLength] = useState(
-    challenge ? challenge.length : parseUrlLength()
-  );
   const [gameNumber, setGameNumber] = useState(parseUrlGameNumber());
   const [target, setTarget] = useState(() => {
     resetRng();
     // Skip RNG ahead to the parsed initial game number:
-    for (let i = 1; i < gameNumber; i++) randomTarget(wordLength);
-    return challenge || randomTarget(wordLength);
+    for (let i = 1; i < gameNumber; i++) randomTarget();
+    return challenge || randomTarget();
   });
   const [hint, setHint] = useState<string>(
     challengeError
@@ -121,8 +108,8 @@ function Game(props: GameProps) {
       : `Make your first guess!`
   );
   const getCurrentSeedParams = useCallback(
-    () => `?seed=${seed}&length=${wordLength}&game=${gameNumber}`,
-    [gameNumber, wordLength]
+    () => `?seed=${seed}&length=${WORD_LENGTH}&game=${gameNumber}`,
+    [gameNumber]
   );
   useEffect(() => {
     if (seed) {
@@ -132,7 +119,7 @@ function Game(props: GameProps) {
         window.location.pathname + getCurrentSeedParams()
       );
     }
-  }, [wordLength, gameNumber, getCurrentSeedParams]);
+  }, [gameNumber, getCurrentSeedParams]);
   const tableRef = useRef<HTMLTableElement>(null);
   const startNextGame = () => {
     if (challenge) {
@@ -140,9 +127,7 @@ function Game(props: GameProps) {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
     setChallenge("");
-    const newWordLength = limitLength(wordLength);
-    setWordLength(newWordLength);
-    setTarget(randomTarget(newWordLength));
+    setTarget(randomTarget());
     setHint("");
     setGuesses([]);
     setCurrentGuess("");
@@ -189,7 +174,7 @@ function Game(props: GameProps) {
       if (guesses.length === props.maxGuesses) return;
       if (/^[a-z]$/i.test(key)) {
         setCurrentGuess((guess) =>
-          (guess + key.toLowerCase()).slice(0, wordLength)
+          (guess + key.toLowerCase()).slice(0, WORD_LENGTH)
         );
         tableRef.current?.focus();
         setHint("");
@@ -197,7 +182,7 @@ function Game(props: GameProps) {
         setCurrentGuess((guess) => guess.slice(0, -1));
         setHint("");
       } else if (key === "Enter") {
-        if (currentGuess.length !== wordLength) {
+        if (currentGuess.length !== WORD_LENGTH) {
           setHint("Too short");
           return;
         }
@@ -295,7 +280,7 @@ function Game(props: GameProps) {
       return (
         <Row
           key={i}
-          wordLength={wordLength}
+          wordLength={WORD_LENGTH}
           rowState={
             lockedIn
               ? RowState.LockedIn
@@ -310,49 +295,11 @@ function Game(props: GameProps) {
     });
 
   tableRows.push(
-    <BottomRow key="bottom" wordLength={wordLength} totalScore={totalScore} />
+    <BottomRow key="bottom" wordLength={WORD_LENGTH} totalScore={totalScore} />
   );
 
   return (
     <div className="Game" style={{ display: props.hidden ? "none" : "block" }}>
-      <div className="Game-options">
-        <label htmlFor="wordLength">Letters:</label>
-        <input
-          type="range"
-          min={minLength}
-          max={maxLength}
-          id="wordLength"
-          disabled={
-            gameState === GameState.Playing &&
-            (guesses.length > 0 || currentGuess !== "" || challenge !== "")
-          }
-          value={wordLength}
-          onChange={(e) => {
-            const length = Number(e.target.value);
-            resetRng();
-            setGameNumber(1);
-            setGameState(GameState.Playing);
-            setGuesses([]);
-            setCurrentGuess("");
-            setTarget(randomTarget(length));
-            setWordLength(length);
-            setHint(`${length} letters`);
-          }}
-        ></input>
-        <button
-          style={{ flex: "0 0 auto" }}
-          disabled={gameState !== GameState.Playing || guesses.length === 0}
-          onClick={() => {
-            setHint(
-              `The answer was ${target.toUpperCase()}. (Enter to play again)`
-            );
-            setGameState(GameState.Lost);
-            (document.activeElement as HTMLElement)?.blur();
-          }}
-        >
-          Give up
-        </button>
-      </div>
       <table
         className="Game-rows"
         tabIndex={0}
@@ -380,7 +327,7 @@ function Game(props: GameProps) {
         {challenge
           ? "playing a challenge game"
           : seed
-          ? `${describeSeed(seed)} — length ${wordLength}, game ${gameNumber}`
+          ? `${describeSeed(seed)} — length ${WORD_LENGTH}, game ${gameNumber}`
           : "playing a random game"}
       </div>
       <p>
