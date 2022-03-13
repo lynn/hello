@@ -6,7 +6,7 @@ export function About() {
   return (
     <div className="App-about">
       <p>
-        <i>scrabble-dle</i> is based on
+        <i>scrabdle</i> is based on
         {/* // TODO  write stuff */}
         is a remake of the word game{" "}
         <a href="https://www.powerlanguage.co.uk/wordle/">
