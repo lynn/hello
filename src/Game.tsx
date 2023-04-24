@@ -174,6 +174,10 @@ function Game(props: GameProps) {
       setCurrentGuess((guess) => guess.slice(0, -1));
       setHint("");
     } else if (key === "Enter") {
+      if (currentGuess.length !== wordLength && !dictionary.includes(currentGuess)) {
+        setHint("Too short and not a valid word");
+        return;
+      }
       if (currentGuess.length !== wordLength) {
         setHint("Too short");
         return;
