@@ -95,7 +95,8 @@ table.Game-rows > tbody {
   justify-content: stretch;
 }
 
-.Game-keyboard-button {
+.Game-keyboard-button,
+.Game-random-guess {
   margin: 2px;
   background-color: #cdcdcd;
   padding: 2px;
