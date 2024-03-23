@@ -46,6 +46,7 @@ function App() {
     "qwertyuiop-asdfghjkl-BzxcvbnmE"
   );
   const [enterLeft, setEnterLeft] = useSetting<boolean>("enter-left", false);
+  const [ongoing, setOngoing] = useState<boolean>(false);
 
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
@@ -133,6 +134,7 @@ function App() {
               max="2"
               value={difficulty}
               onChange={(e) => setDifficulty(+e.target.value)}
+              disabled={ongoing === true}
             />
             <div>
               <label htmlFor="difficulty-setting">Difficulty:</label>
@@ -189,6 +191,7 @@ function App() {
           /[BE]/g,
           (x) => (enterLeft ? "EB" : "BE")["BE".indexOf(x)]
         )}
+        setOngoing={setOngoing}
       />
     </div>
   );

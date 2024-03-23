@@ -29,6 +29,7 @@ interface GameProps {
   difficulty: Difficulty;
   colorBlind: boolean;
   keyboardLayout: string;
+  setOngoing: Function;
 }
 
 const targets = targetList.slice(0, targetList.indexOf("murky") + 1); // Words no rarer than this one
@@ -45,6 +46,12 @@ function randomTarget(wordLength: number): string {
     candidate = pick(eligible);
   } while (/\*/.test(candidate));
   return candidate;
+}
+
+function getDifficultyStars(difficulty: Difficulty): string {
+  if (difficulty === Difficulty.UltraHard) return '**';
+  else if (difficulty === Difficulty.Hard) return '*';
+  else return '';
 }
 
 function getChallengeUrl(target: string): string {
@@ -87,6 +94,7 @@ function Game(props: GameProps) {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [challenge, setChallenge] = useState<string>(initChallenge);
+  const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(props.difficulty);
   const [wordLength, setWordLength] = useState(
     challenge ? challenge.length : parseUrlLength()
   );
@@ -128,6 +136,7 @@ function Game(props: GameProps) {
     setCurrentGuess("");
     setGameState(GameState.Playing);
     setGameNumber((x) => x + 1);
+    props.setOngoing(false);
   };
 
   async function share(copiedHint: string, text?: string) {
@@ -190,7 +199,9 @@ function Game(props: GameProps) {
           return;
         }
       }
+      if (guesses.length === 0) setCurrentDifficulty(props.difficulty);
       setGuesses((guesses) => guesses.concat([currentGuess]));
+      props.setOngoing(true);
       setCurrentGuess((guess) => "");
 
       const gameOver = (verbed: string) =>
@@ -201,9 +212,11 @@ function Game(props: GameProps) {
       if (currentGuess === target) {
         setHint(gameOver("won"));
         setGameState(GameState.Won);
+        props.setOngoing(false);
       } else if (guesses.length + 1 === props.maxGuesses) {
         setHint(gameOver("lost"));
         setGameState(GameState.Lost);
+        props.setOngoing(false);
       } else {
         setHint("");
         speak(describeClue(clue(currentGuess, target)));
@@ -282,6 +295,7 @@ function Game(props: GameProps) {
             setTarget(randomTarget(length));
             setWordLength(length);
             setHint(`${length} letters`);
+            props.setOngoing(false);
           }}
         ></input>
         <button
@@ -292,6 +306,7 @@ function Game(props: GameProps) {
               `The answer was ${target.toUpperCase()}. (Enter to play again)`
             );
             setGameState(GameState.Lost);
+            props.setOngoing(false);
             (document.activeElement as HTMLElement)?.blur();
           }}
         >
@@ -344,7 +359,7 @@ function Game(props: GameProps) {
               const score = gameState === GameState.Lost ? "X" : guesses.length;
               share(
                 "Result copied to clipboard!",
-                `${gameName} ${score}/${props.maxGuesses}\n` +
+                `${gameName} ${score}/${props.maxGuesses}${getDifficultyStars(currentDifficulty)}\n` +
                   guesses
                     .map((guess) =>
                       clue(guess, target)
